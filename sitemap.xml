@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2020/01/02/Burpsuite-Ubuntu%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</loc>
+    
+    <lastmod>2020-01-14T15:01:46.237Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2020/01/01/MIPS-%E5%9B%BA%E4%BB%B6%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</loc>
     
     <lastmod>2020-01-13T14:46:35.416Z</lastmod>
@@ -47,13 +54,6 @@
     <loc>http://yoursite.com/2020/01/10/Docker-%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8/</loc>
     
     <lastmod>2020-01-10T05:22:11.032Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2020/01/02/Burpsuite-Ubuntu%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</loc>
-    
-    <lastmod>2020-01-02T10:07:22.009Z</lastmod>
     
   </url>
   
