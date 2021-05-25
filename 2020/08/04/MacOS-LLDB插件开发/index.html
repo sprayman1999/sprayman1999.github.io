@@ -1,0 +1,2503 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MacOS-LLDB插件开发 | 咲夜南梦's 博客</title><meta name="description" content="MacOS-LLDB插件开发"><meta name="keywords" content="MacOS,LLDB"><meta name="author" content="咲夜南梦,196011564@qq.com"><meta name="copyright" content="咲夜南梦"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="MacOS-LLDB插件开发"><meta name="twitter:description" content="MacOS-LLDB插件开发"><meta name="twitter:image" content="http://yoursite.com/2020/08/04/MacOS-LLDB%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/1.png"><meta property="og:type" content="article"><meta property="og:title" content="MacOS-LLDB插件开发"><meta property="og:url" content="http://yoursite.com/2020/08/04/MacOS-LLDB%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/"><meta property="og:site_name" content="咲夜南梦's 博客"><meta property="og:description" content="MacOS-LLDB插件开发"><meta property="og:image" content="http://yoursite.com/2020/08/04/MacOS-LLDB%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/1.png"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = '1'
+var t = Cookies.get("theme")
+if (autoChangeMode == '1'){
+  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+  const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+  const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+  const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined){
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport){
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      now = new Date();
+      hour = now.getHours();
+      isNight = hour < 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+  }
+  } else if (t == 'light') activateLightMode()
+  else activateDarkMode()
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://yoursite.com/2020/08/04/MacOS-LLDB%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/"><link rel="prev" title="CTF-MacPwn分析" href="http://yoursite.com/2020/08/04/CTF-MacPwn%E5%88%86%E6%9E%90/"><link rel="next" title="Python-shlex库" href="http://yoursite.com/2020/07/25/Python-shlex%E5%BA%93/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  highlightShrink: false,
+  isFontAwesomeV5: false
+  
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false
+}</script><meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="咲夜南梦's 博客" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">172</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">51</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">29</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 额外功能</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Python接口"><span class="toc-number">1.</span> <span class="toc-text">Python接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在lldb中导入插件"><span class="toc-number">2.</span> <span class="toc-text">在lldb中导入插件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初识-lldb-init-module接口"><span class="toc-number"></span> <span class="toc-text">初识__lldb_init_module接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#当一个python脚本被lldb导入的时候，lldb会调用这个接口。"><span class="toc-number">1.</span> <span class="toc-text">当一个python脚本被lldb导入的时候，lldb会调用这个接口。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一般情况下，我们编写一个python脚本负责把所有的python脚本引入进来，我个人称为loader脚本"><span class="toc-number">2.</span> <span class="toc-text">一般情况下，我们编写一个python脚本负责把所有的python脚本引入进来，我个人称为loader脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lldb添加的每一个我们都要写一个脚本和它对应，添加命令的代码如下"><span class="toc-number">3.</span> <span class="toc-text">lldb添加的每一个我们都要写一个脚本和它对应，添加命令的代码如下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#接下来就是实现命令具体的内容了"><span class="toc-number">4.</span> <span class="toc-text">接下来就是实现命令具体的内容了</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#一共有两种定义命令具体内容的办法，一是通过函数，而是通过类。很明显通过类会更加的具体、完整。"><span class="toc-number">4.1.</span> <span class="toc-text">一共有两种定义命令具体内容的办法，一是通过函数，而是通过类。很明显通过类会更加的具体、完整。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#类的定义方法："><span class="toc-number">4.2.</span> <span class="toc-text">类的定义方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数定义方法："><span class="toc-number">4.3.</span> <span class="toc-text">函数定义方法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出指令命令之后数据"><span class="toc-number">5.</span> <span class="toc-text">输出指令命令之后数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lldb-debugger类"><span class="toc-number"></span> <span class="toc-text">lldb.debugger类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lldb-debugger-GetSelectedTarget"><span class="toc-number">1.</span> <span class="toc-text">lldb.debugger.GetSelectedTarget()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lldb-SBTarget"><span class="toc-number"></span> <span class="toc-text">lldb.SBTarget</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获取Target"><span class="toc-number">1.</span> <span class="toc-text">获取Target</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取被调试文件的目录"><span class="toc-number">2.</span> <span class="toc-text">获取被调试文件的目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lldb-SBModule"><span class="toc-number"></span> <span class="toc-text">lldb.SBModule</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获取架构、动态链接库目录"><span class="toc-number">1.</span> <span class="toc-text">获取架构、动态链接库目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取程序运行所有module的uuid，包括动态链接库"><span class="toc-number">2.</span> <span class="toc-text">获取程序运行所有module的uuid，包括动态链接库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获得target的module的section"><span class="toc-number">3.</span> <span class="toc-text">获得target的module的section</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取所有module的目录"><span class="toc-number">4.</span> <span class="toc-text">获取所有module的目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取某一个模块的路径"><span class="toc-number">5.</span> <span class="toc-text">获取某一个模块的路径</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lldb-SBSymbol"><span class="toc-number"></span> <span class="toc-text">lldb.SBSymbol</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获取所有的symols-结构体、函数名等"><span class="toc-number">1.</span> <span class="toc-text">获取所有的symols(结构体、函数名等)</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/2020/08/04/MacOS-LLDB插件开发/1.png)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">咲夜南梦's 博客</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 额外功能</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div><div id="post-info"><div id="post-title"><div class="posttitle">MacOS-LLDB插件开发</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2020-08-04<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-08-04</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/MacOS/">MacOS</a></span><div class="post-meta-wordcount"><div class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="post-meta__icon fa fa-comment-o" aria-hidden="true"></i><span>评论数:</span><a href="/2020/08/04/MacOS-LLDB%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></div></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div id="article-container"><h3 id="Python接口">Python接口</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;lldb.llvm.org&#x2F;python_reference&#x2F;index.html</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;reverse.put.as&#x2F;2019&#x2F;11&#x2F;19&#x2F;how-to-make-lldb-a-real-debugger&#x2F;</span><br></pre></td></tr></table></figure>
+<h3 id="在lldb中导入插件">在lldb中导入插件</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command script import &#x2F;plugin.py</span><br></pre></td></tr></table></figure>
+<h2 id="初识-lldb-init-module接口">初识__lldb_init_module接口</h2>
+<hr>
+<h3 id="当一个python脚本被lldb导入的时候，lldb会调用这个接口。">当一个python脚本被lldb导入的时候，lldb会调用这个接口。</h3>
+<h3 id="一般情况下，我们编写一个python脚本负责把所有的python脚本引入进来，我个人称为loader脚本">一般情况下，我们编写一个python脚本负责把所有的python脚本引入进来，我个人称为loader脚本</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def __lldb_init_module(debugger,dict):</span><br><span class="line">        print(&quot;Import Plugin Success!&quot;)</span><br></pre></td></tr></table></figure>
+<h3 id="lldb添加的每一个我们都要写一个脚本和它对应，添加命令的代码如下">lldb添加的每一个我们都要写一个脚本和它对应，添加命令的代码如下</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">command script add &#123;command_name&#125; -f &#123;python_script_name&#125;.&#123;function_name or class_name&#125;</span><br><span class="line">&#x2F;&#x2F; 以上大括号里的，都是要自己填充的</span><br></pre></td></tr></table></figure>
+<h3 id="接下来就是实现命令具体的内容了">接下来就是实现命令具体的内容了</h3>
+<h4 id="一共有两种定义命令具体内容的办法，一是通过函数，而是通过类。很明显通过类会更加的具体、完整。">一共有两种定义命令具体内容的办法，一是通过函数，而是通过类。很明显通过类会更加的具体、完整。</h4>
+<h4 id="类的定义方法：">类的定义方法：</h4>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class CommandObjectType:</span><br><span class="line">    def __init__(self, debugger, session_dict):</span><br><span class="line">        this call should initialize the command with respect to the command interpreter for the passed-in debugger</span><br><span class="line">    def __call__(self, debugger, command, exe_ctx, result):</span><br><span class="line">        this is the actual bulk of the command, akin to Python command functions</span><br><span class="line">    def get_short_help(self):</span><br><span class="line">        this call should return the short help text for this command[1]</span><br><span class="line">    def get_long_help(self):</span><br><span class="line">        this call should return the long help text for this command[1]</span><br></pre></td></tr></table></figure>
+<h4 id="函数定义方法：">函数定义方法：</h4>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def function_name(debugger, command, exe_ctx, result, internal_dict):</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
+<h3 id="输出指令命令之后数据">输出指令命令之后数据</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result.AppendMessage(&quot;deadbeef&quot;)</span><br></pre></td></tr></table></figure>
+<h2 id="lldb-debugger类">lldb.debugger类</h2>
+<hr>
+<h3 id="lldb-debugger-GetSelectedTarget">lldb.debugger.GetSelectedTarget()</h3>
+<h2 id="lldb-SBTarget">lldb.SBTarget</h2>
+<hr>
+<h3 id="获取Target">获取Target</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lldb.debugger.getSelectedTarget()</span><br></pre></td></tr></table></figure>
+<h3 id="获取被调试文件的目录">获取被调试文件的目录</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lldb.debugger.GetSelectedTarget().executable.fullpath</span><br></pre></td></tr></table></figure>
+<h2 id="lldb-SBModule">lldb.SBModule</h2>
+<hr>
+<h3 id="获取架构、动态链接库目录">获取架构、动态链接库目录</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for i in lldb.debugger.GetSelectedTarget().module_iter():</span><br><span class="line">	 print(i)</span><br></pre></td></tr></table></figure>
+<h3 id="获取程序运行所有module的uuid，包括动态链接库">获取程序运行所有module的uuid，包括动态链接库</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for i in lldb.debugger.GetSelectedTarget().module_iter():</span><br><span class="line">	 print(i.uuid)</span><br></pre></td></tr></table></figure>
+<h3 id="获得target的module的section">获得target的module的section</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fullpath &#x3D; getTarget().executable.fullpath</span><br><span class="line">modules &#x3D; getTarget().module[fullpath]</span><br><span class="line">for i in modules.section_iter():</span><br><span class="line">	print(i)</span><br></pre></td></tr></table></figure>
+<h3 id="获取所有module的目录">获取所有module的目录</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for module in getTarget().module_iter():</span><br><span class="line">	print(module.file)</span><br></pre></td></tr></table></figure>
+<h3 id="获取某一个模块的路径">获取某一个模块的路径</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for module in getTarget().module_iter():</span><br><span class="line">	print(module.file)</span><br></pre></td></tr></table></figure>
+<h2 id="lldb-SBSymbol">lldb.SBSymbol</h2>
+<hr>
+<h3 id="获取所有的symols-结构体、函数名等">获取所有的symols(结构体、函数名等)</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">for i in getTarget().module_iter():</span><br><span class="line">	 for symbol in i:</span><br><span class="line">	 	 print(symbol.GetName())	</span><br><span class="line">	 	 </span><br><span class="line">输出结果如下</span><br><span class="line">[0x0000000000000000-0x0000000100000000) hello.__PAGEZERO</span><br><span class="line">[0x0000000100000000-0x0000000100001000) hello.__TEXT</span><br><span class="line">[0x0000000100001000-0x0000000100002000) hello.__DATA_CONST</span><br><span class="line">[0x0000000100002000-0x0000000100003000) hello.__DATA</span><br><span class="line">[0x0000000100003000-0x0000000100008000) hello.__LINKEDIT 	 </span><br><span class="line">&#96;&#96;&#96; </span><br><span class="line"></span><br><span class="line">## lldb.SBSection</span><br><span class="line">---</span><br><span class="line">### 获取某一个模块所有的区段地址和名称</span><br></pre></td></tr></table></figure>
+<p>for module in getTarget().module_iter():<br>
+for section in module.get_sections_array():<br>
+print(section.GetLoadAddress(getTarget()))<br>
+print(section.GetName())<br>
+运行结果：<br>
+/usr/lib/system/libsystem_trace.dylib<br>
+140734928015360<br>
+__TEXT<br>
+140735571328992<br>
+__DATA<br>
+140736423665664<br>
+__LINKEDIT<br>
+/usr/lib/system/libunwind.dylib<br>
+140734928113664<br>
+__TEXT<br>
+140735571336960<br>
+__DATA<br>
+140736423665664<br>
+__LINKEDIT<br>
+……</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 查看区段可读可写可执行权限</span><br></pre></td></tr></table></figure>
+<p>for module in getTarget().module_iter():<br>
+for section in module.get_sections_array():<br>
+print(section.GetPermissions())</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## lldb.SBFrame</span><br><span class="line">### 获取寄存器</span><br></pre></td></tr></table></figure>
+<pre><code>    registers = frame.GetRegisters()
+    for value in registers:
+            for child in value:
+                    print(child.GetValue())
+                    print(child.GetName())
+</code></pre>
+<p>结果如下：<br>
+0x0000000000000000<br>
+rax<br>
+0x0000000000000000<br>
+rbx<br>
+0x00007ffeefbff550<br>
+rcx<br>
+0x44831090291d00e8<br>
+……</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 官方文档解释 </span><br><span class="line">#### SBModule Python Help</span><br></pre></td></tr></table></figure>
+<p>|  SBModule supports symbol iteration, for example,<br>
+|<br>
+|      for symbol in module:<br>
+|          name = symbol.GetName()<br>
+|          saddr = symbol.GetStartAddress()<br>
+|          eaddr = symbol.GetEndAddress()<br>
+Help on SBModule in module lldb object:<br>
+class SBModule(builtins.object)<br>
+|  SBModule(<em>args)<br>
+|<br>
+|  Represents an executable image and its associated object and symbol files.<br>
+|<br>
+|  The module is designed to be able to select a single slice of an<br>
+|  executable image as it would appear on disk and during program<br>
+|  execution.<br>
+|<br>
+|  You can retrieve SBModule from SBSymbolContext, which in turn is available<br>
+|  from SBFrame.<br>
+|<br>
+|  SBModule supports symbol iteration, for example,<br>
+|<br>
+|      for symbol in module:<br>
+|          name = symbol.GetName()<br>
+|          saddr = symbol.GetStartAddress()<br>
+|          eaddr = symbol.GetEndAddress()<br>
+|<br>
+|  and rich comparison methods which allow the API program to use,<br>
+|<br>
+|      if thisModule == thatModule:<br>
+|          print(‘This module is the same as that module’)<br>
+|<br>
+|  to test module equality.  A module also contains object file sections, namely<br>
+|  SBSection.  SBModule supports section iteration through section_iter(), for<br>
+|  example,<br>
+|<br>
+|      print(‘Number of sections: %d’ % module.GetNumSections())<br>
+|      for sec in module.section_iter():<br>
+|          print(sec)<br>
+|<br>
+|  And to iterate the symbols within a SBSection, use symbol_in_section_iter(),<br>
+|<br>
+|      # Iterates the text section and prints each symbols within each sub-section.<br>
+|      for subsec in text_sec:<br>
+|          print(INDENT + repr(subsec))<br>
+|          for sym in exe_module.symbol_in_section_iter(subsec):<br>
+|              print(INDENT2 + repr(sym))<br>
+|              print(INDENT2 + ‘symbol type: %s’ % symbol_type_to_str(sym.GetType()))<br>
+|<br>
+|  produces this following output:<br>
+|<br>
+|      [0x0000000100001780-0x0000000100001d5c) a.out.__TEXT.__text<br>
+|          id = {0x00000004}, name = ‘mask_access(MaskAction, unsigned int)’, range = [0x00000001000017c0-0x0000000100001870)<br>
+|          symbol type: code<br>
+|          id = {0x00000008}, name = 'thread_func(void</em>)’, range = [0x0000000100001870-0x00000001000019b0)<br>
+|          symbol type: code<br>
+|          id = {0x0000000c}, name = ‘main’, range = [0x00000001000019b0-0x0000000100001d5c)<br>
+|          symbol type: code<br>
+|          id = {0x00000023}, name = ‘start’, address = 0x0000000100001780<br>
+|          symbol type: code<br>
+|      [0x0000000100001d5c-0x0000000100001da4) a.out.__TEXT.__stubs<br>
+|          id = {0x00000024}, name = ‘__stack_chk_fail’, range = [0x0000000100001d5c-0x0000000100001d62)<br>
+|          symbol type: trampoline<br>
+|          id = {0x00000028}, name = ‘exit’, range = [0x0000000100001d62-0x0000000100001d68)<br>
+|          symbol type: trampoline<br>
+|          id = {0x00000029}, name = ‘fflush’, range = [0x0000000100001d68-0x0000000100001d6e)<br>
+|          symbol type: trampoline<br>
+|          id = {0x0000002a}, name = ‘fgets’, range = [0x0000000100001d6e-0x0000000100001d74)<br>
+|          symbol type: trampoline<br>
+|          id = {0x0000002b}, name = ‘printf’, range = [0x0000000100001d74-0x0000000100001d7a)<br>
+|          symbol type: trampoline<br>
+|          id = {0x0000002c}, name = ‘pthread_create’, range = [0x0000000100001d7a-0x0000000100001d80)<br>
+|          symbol type: trampoline<br>
+|          id = {0x0000002d}, name = ‘pthread_join’, range = [0x0000000100001d80-0x0000000100001d86)<br>
+|          symbol type: trampoline<br>
+|          id = {0x0000002e}, name = ‘pthread_mutex_lock’, range = [0x0000000100001d86-0x0000000100001d8c)<br>
+|          symbol type: trampoline<br>
+|          id = {0x0000002f}, name = ‘pthread_mutex_unlock’, range = [0x0000000100001d8c-0x0000000100001d92)<br>
+|          symbol type: trampoline<br>
+|          id = {0x00000030}, name = ‘rand’, range = [0x0000000100001d92-0x0000000100001d98)<br>
+|          symbol type: trampoline<br>
+|          id = {0x00000031}, name = ‘strtoul’, range = [0x0000000100001d98-0x0000000100001d9e)<br>
+|          symbol type: trampoline<br>
+|          id = {0x00000032}, name = ‘usleep’, range = [0x0000000100001d9e-0x0000000100001da4)<br>
+|          symbol type: trampoline<br>
+|      [0x0000000100001da4-0x0000000100001e2c) a.out.__TEXT.__stub_helper<br>
+|      [0x0000000100001e2c-0x0000000100001f10) a.out.__TEXT.__cstring<br>
+|      [0x0000000100001f10-0x0000000100001f68) a.out.__TEXT.__unwind_info<br>
+|      [0x0000000100001f68-0x0000000100001ff8) a.out.__TEXT.__eh_frame<br>
+|<br>
+|  Methods defined here:<br>
+|<br>
+|  Clear(self)<br>
+|      Clear(SBModule self)<br>
+|<br>
+|  FindCompileUnits(self, sb_file_spec)<br>
+|      FindCompileUnits(SBModule self, SBFileSpec sb_file_spec) -&gt; SBSymbolContextList<br>
+|<br>
+|<br>
+|      Find compile units related to *this module and passed source<br>
+|      file.<br>
+|<br>
+|      @param[in] sb_file_spec<br>
+|          A lldb::SBFileSpec object that contains source file<br>
+|          specification.<br>
+|<br>
+|      @return<br>
+|          A lldb::SBSymbolContextList that gets filled in with all of<br>
+|          the symbol contexts for all the matches.<br>
+|<br>
+|  FindFirstGlobalVariable(self, target, name)<br>
+|      FindFirstGlobalVariable(SBModule self, SBTarget target, str const * name) -&gt; SBValue<br>
+|<br>
+|<br>
+|      Find the first global (or static) variable by name.<br>
+|<br>
+|      @param[in] target<br>
+|          A valid SBTarget instance representing the debuggee.<br>
+|<br>
+|      @param[in] name<br>
+|          The name of the global or static variable we are looking<br>
+|          for.<br>
+|<br>
+|      @return<br>
+|          An SBValue that gets filled in with the found variable (if any).<br>
+|<br>
+|  FindFirstType(self, name)<br>
+|      FindFirstType(SBModule self, str const * name) -&gt; SBType<br>
+|<br>
+|  FindFunctions(self, *args)<br>
+|      FindFunctions(SBModule self, str const * name, uint32_t name_type_mask) -&gt; SBSymbolContextList<br>
+|      FindFunctions(SBModule self, str const * name) -&gt; SBSymbolContextList<br>
+|<br>
+|<br>
+|      Find functions by name.<br>
+|<br>
+|      @param[in] name<br>
+|          The name of the function we are looking for.<br>
+|<br>
+|      @param[in] name_type_mask<br>
+|          A logical OR of one or more FunctionNameType enum bits that<br>
+|          indicate what kind of names should be used when doing the<br>
+|          lookup. Bits include fully qualified names, base names,<br>
+|          C++ methods, or ObjC selectors.<br>
+|          See FunctionNameType for more details.<br>
+|<br>
+|      @return<br>
+|          A symbol context list that gets filled in with all of the<br>
+|          matches.<br>
+|<br>
+|  FindGlobalVariables(self, target, name, max_matches)<br>
+|      FindGlobalVariables(SBModule self, SBTarget target, str const * name, uint32_t max_matches) -&gt; SBValueList<br>
+|<br>
+|<br>
+|      Find global and static variables by name.<br>
+|<br>
+|      @param[in] target<br>
+|          A valid SBTarget instance representing the debuggee.<br>
+|<br>
+|      @param[in] name<br>
+|          The name of the global or static variable we are looking<br>
+|          for.<br>
+|<br>
+|      @param[in] max_matches<br>
+|          Allow the number of matches to be limited to max_matches.<br>
+|<br>
+|      @return<br>
+|          A list of matched variables in an SBValueList.<br>
+|<br>
+|  FindSection(self, sect_name)<br>
+|      FindSection(SBModule self, str const * sect_name) -&gt; SBSection<br>
+|<br>
+|  FindSymbol(self, *args)<br>
+|      FindSymbol(SBModule self, str const * name, lldb::SymbolType type) -&gt; SBSymbol<br>
+|      FindSymbol(SBModule self, str const * name) -&gt; SBSymbol<br>
+|<br>
+|  FindSymbols(self, *args)<br>
+|      FindSymbols(SBModule self, str const * name, lldb::SymbolType type) -&gt; SBSymbolContextList<br>
+|      FindSymbols(SBModule self, str const * name) -&gt; SBSymbolContextList<br>
+|<br>
+|  FindTypes(self, type)<br>
+|      FindTypes(SBModule self, str const * type) -&gt; SBTypeList<br>
+|<br>
+|  GetAddressByteSize(self)<br>
+|      GetAddressByteSize(SBModule self) -&gt; uint32_t<br>
+|<br>
+|  GetBasicType(self, type)<br>
+|      GetBasicType(SBModule self, lldb::BasicType type) -&gt; SBType<br>
+|<br>
+|  GetByteOrder(self)<br>
+|      GetByteOrder(SBModule self) -&gt; lldb::ByteOrder<br>
+|<br>
+|  GetCompileUnitAtIndex(self, arg2)<br>
+|      GetCompileUnitAtIndex(SBModule self, uint32_t arg2) -&gt; SBCompileUnit<br>
+|<br>
+|  GetDescription(self, description)<br>
+|      GetDescription(SBModule self, SBStream description) -&gt; bool<br>
+|<br>
+|  GetFileSpec(self)<br>
+|      GetFileSpec(SBModule self) -&gt; SBFileSpec<br>
+|<br>
+|<br>
+|      Get const accessor for the module file specification.<br>
+|<br>
+|      This function returns the file for the module on the host system<br>
+|      that is running LLDB. This can differ from the path on the<br>
+|      platform since we might be doing remote debugging.<br>
+|<br>
+|      @return<br>
+|          A const reference to the file specification object.<br>
+|<br>
+|  GetNumCompileUnits(self)<br>
+|      GetNumCompileUnits(SBModule self) -&gt; uint32_t<br>
+|<br>
+|  GetNumSections(self)<br>
+|      GetNumSections(SBModule self) -&gt; size_t<br>
+|<br>
+|  GetNumSymbols(self)<br>
+|      GetNumSymbols(SBModule self) -&gt; size_t<br>
+|<br>
+|  GetObjectFileEntryPointAddress(self)<br>
+|      GetObjectFileEntryPointAddress(SBModule self) -&gt; SBAddress<br>
+|<br>
+|  GetObjectFileHeaderAddress(self)<br>
+|      GetObjectFileHeaderAddress(SBModule self) -&gt; SBAddress<br>
+|<br>
+|  GetPlatformFileSpec(self)<br>
+|      GetPlatformFileSpec(SBModule self) -&gt; SBFileSpec<br>
+|<br>
+|<br>
+|      Get accessor for the module platform file specification.<br>
+|<br>
+|      Platform file refers to the path of the module as it is known on<br>
+|      the remote system on which it is being debugged. For local<br>
+|      debugging this is always the same as Module::GetFileSpec(). But<br>
+|      remote debugging might mention a file ‘/usr/lib/liba.dylib’<br>
+|      which might be locally downloaded and cached. In this case the<br>
+|      platform file could be something like:<br>
+|      ‘/tmp/lldb/platform-cache/remote.host.computer/usr/lib/liba.dylib’<br>
+|      The file could also be cached in a local developer kit directory.<br>
+|<br>
+|      @return<br>
+|          A const reference to the file specification object.<br>
+|<br>
+|  GetRemoteInstallFileSpec(self)<br>
+|      GetRemoteInstallFileSpec(SBModule self) -&gt; SBFileSpec<br>
+|<br>
+|  GetSectionAtIndex(self, idx)<br>
+|      GetSectionAtIndex(SBModule self, size_t idx) -&gt; SBSection<br>
+|<br>
+|  GetSymbolAtIndex(self, idx)<br>
+|      GetSymbolAtIndex(SBModule self, size_t idx) -&gt; SBSymbol<br>
+|<br>
+|  GetSymbolFileSpec(self)<br>
+|      GetSymbolFileSpec(SBModule self) -&gt; SBFileSpec<br>
+|<br>
+|  GetTriple(self)<br>
+|      GetTriple(SBModule self) -&gt; str const *<br>
+|<br>
+|  GetTypeByID(self, uid)<br>
+|      GetTypeByID(SBModule self, lldb::user_id_t uid) -&gt; SBType<br>
+|<br>
+|  GetTypes(self, *args)<br>
+|      GetTypes(SBModule self, uint32_t type_mask) -&gt; SBTypeList<br>
+|      GetTypes(SBModule self) -&gt; SBTypeList<br>
+|<br>
+|<br>
+|      Get all types matching type_mask from debug info in this<br>
+|      module.<br>
+|<br>
+|      @param[in] type_mask<br>
+|          A bitfield that consists of one or more bits logically OR’ed<br>
+|          together from the lldb::TypeClass enumeration. This allows<br>
+|          you to request only structure types, or only class, struct<br>
+|          and union types. Passing in lldb::eTypeClassAny will return<br>
+|          all types found in the debug information for this module.<br>
+|<br>
+|      @return<br>
+|          A list of types in this module that match type_mask<br>
+|<br>
+|  GetUUIDString(self)<br>
+|      GetUUIDString(SBModule self) -&gt; str const *<br>
+|<br>
+|      Returns the UUID of the module as a Python string.<br>
+|<br>
+|  GetVersion(self)<br>
+|      GetVersion(SBModule self) -&gt; uint32_t<br>
+|<br>
+|  IsTypeSystemCompatible(self, language)<br>
+|      IsTypeSystemCompatible(SBModule self, lldb::LanguageType language) -&gt; SBError<br>
+|<br>
+|  IsValid(self)<br>
+|      IsValid(SBModule self) -&gt; bool<br>
+|<br>
+|  ResolveFileAddress(self, vm_addr)<br>
+|      ResolveFileAddress(SBModule self, lldb::addr_t vm_addr) -&gt; SBAddress<br>
+|<br>
+|  ResolveSymbolContextForAddress(self, addr, resolve_scope)<br>
+|      ResolveSymbolContextForAddress(SBModule self, SBAddress addr, uint32_t resolve_scope) -&gt; SBSymbolContext<br>
+|<br>
+|  SetPlatformFileSpec(self, platform_file)<br>
+|      SetPlatformFileSpec(SBModule self, SBFileSpec platform_file) -&gt; bool<br>
+|<br>
+|  SetRemoteInstallFileSpec(self, file)<br>
+|      SetRemoteInstallFileSpec(SBModule self, SBFileSpec file) -&gt; bool<br>
+|<br>
+|  <strong>bool</strong> = <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>del</strong> lambda self<br>
+|<br>
+|  <strong>eq</strong>(self, rhs)<br>
+|      Return self==value.<br>
+|<br>
+|  <strong>getattr</strong> lambda self, name<br>
+|<br>
+|  <strong>init</strong>(self, *args)<br>
+|      <strong>init</strong>(lldb::SBModule self) -&gt; SBModule<br>
+|      <strong>init</strong>(lldb::SBModule self, SBModule rhs) -&gt; SBModule<br>
+|      <strong>init</strong>(lldb::SBModule self, SBModuleSpec module_spec) -&gt; SBModule<br>
+|      <strong>init</strong>(lldb::SBModule self, SBProcess process, lldb::addr_t header_addr) -&gt; SBModule<br>
+|<br>
+|  <strong>iter</strong>(self)<br>
+|<br>
+|  <strong>len</strong>(self)<br>
+|<br>
+|  <strong>ne</strong>(self, rhs)<br>
+|      Return self!=value.<br>
+|<br>
+|  <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>repr</strong> = _swig_repr(self)<br>
+|<br>
+|  <strong>setattr</strong> lambda self, name, value<br>
+|<br>
+|  <strong>str</strong>(self)<br>
+|      <strong>str</strong>(SBModule self) -&gt; PyObject *<br>
+|<br>
+|  compile_unit_iter(self)<br>
+|<br>
+|  get_compile_units_access_object(self)<br>
+|      An accessor function that returns a compile_units_access() object which allows lazy compile unit access from a lldb.SBModule object.<br>
+|<br>
+|  get_compile_units_array(self)<br>
+|      An accessor function that returns an array object that contains all compile_units in this module object.<br>
+|<br>
+|  get_sections_access_object(self)<br>
+|      An accessor function that returns a sections_access() object which allows lazy section array access.<br>
+|<br>
+|  get_sections_array(self)<br>
+|      An accessor function that returns an array object that contains all sections in this module object.<br>
+|<br>
+|  get_symbols_access_object(self)<br>
+|      An accessor function that returns a symbols_access() object which allows lazy symbol access from a lldb.SBModule object.<br>
+|<br>
+|  get_symbols_array(self)<br>
+|      An accessor function that returns a list() that contains all symbols in a lldb.SBModule object.<br>
+|<br>
+|  get_uuid(self)<br>
+|<br>
+|  section_iter(self)<br>
+|<br>
+|  symbol_in_section_iter(self, section)<br>
+|      Given a module and its contained section, returns an iterator on the<br>
+|      symbols within the section.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static methods defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_destroy</strong> = delete_SBModule(…)</td>
+</tr>
+<tr>
+<td>delete_SBModule(SBModule self)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data descriptors defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>dict</strong></td>
+</tr>
+<tr>
+<td>dictionary for instance variables (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>weakref</strong></td>
+</tr>
+<tr>
+<td>list of weak references to the object (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>addr_size</td>
+</tr>
+<tr>
+<td>A read only property that returns the size in bytes of an address for this module.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>byte_order</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb enumeration value (lldb.eByteOrderLittle, lldb.eByteOrderBig, lldb.eByteOrderInvalid) that represents the byte order for this module.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>compile_units</td>
+</tr>
+<tr>
+<td>A read only property that returns a list() of lldb.SBCompileUnit objects contained in this module.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>file</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb object that represents the file (lldb.SBFileSpec) for this object file for this module as it is represented where it is being debugged.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>num_sections</td>
+</tr>
+<tr>
+<td>A read only property that returns number of sections in the module as an integer.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>num_symbols</td>
+</tr>
+<tr>
+<td>A read only property that returns number of symbols in the module symbol table as an integer.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>platform_file</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb object that represents the file (lldb.SBFileSpec) for this object file for this module as it is represented on the current host system.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>section</td>
+</tr>
+<tr>
+<td>A read only property that can be used to access compile units by index (“compile_unit = module.compile_unit[0]”), name (“compile_unit = module.compile_unit[‘main.cpp’]”), or using a regular expression (“compile_unit = module.compile_unit[re.compile(…)]”). The return value is a single lldb.SBCompileUnit object for array access or by full or partial path, and a list() of lldb.SBCompileUnit objects regular expressions.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>sections</td>
+</tr>
+<tr>
+<td>A read only property that returns a list() of lldb.SBSection objects contained in this module.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>symbol</td>
+</tr>
+<tr>
+<td>A read only property that can be used to access symbols by index (“symbol = module.symbol[0]”), name (“symbols = module.symbol[‘main’]”), or using a regular expression (“symbols = module.symbol[re.compile(…)]”). The return value is a single lldb.SBSymbol object for array access, and a list() of lldb.SBSymbol objects for name and regular expression access</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>symbols</td>
+</tr>
+<tr>
+<td>A read only property that returns a list() of lldb.SBSymbol objects contained in this module.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>triple</td>
+</tr>
+<tr>
+<td>A read only property that returns the target triple (arch-vendor-os) for this module.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>uuid</td>
+</tr>
+<tr>
+<td>A read only property that returns a standard python uuid.UUID object that represents the UUID of this module.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data and other attributes defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>hash</strong> = None</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_getmethods</strong> = {‘addr_size’: &lt;function SBModule.GetAddressByteS…</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_setmethods</strong> = {}</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>compile_units_access = &lt;class ‘lldb.SBModule.compile_units_access’&gt;</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>sections_access = &lt;class ‘lldb.SBModule.sections_access’&gt;</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>symbols_access = &lt;class ‘lldb.SBModule.symbols_access’&gt;</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">#### SBTarget Python Help</span><br></pre></td></tr></table></figure>
+<p>Help on SBTarget in module lldb object:</p>
+<p>class SBTarget(builtins.object)<br>
+|  SBTarget(*args)<br>
+|<br>
+|  Represents the target program running under the debugger.<br>
+|<br>
+|  SBTarget supports module, breakpoint, and watchpoint iterations. For example,<br>
+|<br>
+|      for m in target.module_iter():<br>
+|          print m<br>
+|<br>
+|  produces:<br>
+|<br>
+|  (x86_64) /Volumes/data/lldb/svn/trunk/test/python_api/lldbutil/iter/a.out<br>
+|  (x86_64) /usr/lib/dyld<br>
+|  (x86_64) /usr/lib/libstdc++.6.dylib<br>
+|  (x86_64) /usr/lib/libSystem.B.dylib<br>
+|  (x86_64) /usr/lib/system/libmathCommon.A.dylib<br>
+|  (x86_64) /usr/lib/libSystem.B.dylib(__commpage)<br>
+|<br>
+|  and,<br>
+|<br>
+|      for b in target.breakpoint_iter():<br>
+|          print b<br>
+|<br>
+|  produces:<br>
+|<br>
+|  SBBreakpoint: id = 1, file =‘main.cpp’, line = 66, locations = 1<br>
+|  SBBreakpoint: id = 2, file =‘main.cpp’, line = 85, locations = 1<br>
+|<br>
+|  and,<br>
+|<br>
+|      for wp_loc in target.watchpoint_iter():<br>
+|          print wp_loc<br>
+|<br>
+|  produces:<br>
+|<br>
+|  Watchpoint 1: addr = 0x1034ca048 size = 4 state = enabled type = rw<br>
+|      declare @ ‘/Volumes/data/lldb/svn/trunk/test/python_api/watchpoint/main.c:12’<br>
+|      hw_index = 0  hit_count = 2     ignore_count = 0<br>
+|<br>
+|  Methods defined here:<br>
+|<br>
+|  AddModule(self, *args)<br>
+|      AddModule(SBTarget self, SBModule module) -&gt; bool<br>
+|      AddModule(SBTarget self, str const * path, str const * triple, str const * uuid) -&gt; SBModule<br>
+|      AddModule(SBTarget self, str const * path, str const * triple, str const * uuid_cstr, str const * symfile) -&gt; SBModule<br>
+|      AddModule(SBTarget self, SBModuleSpec module_spec) -&gt; SBModule<br>
+|<br>
+|  AppendImageSearchPath(self, arg2, to, error)<br>
+|      AppendImageSearchPath(SBTarget self, str const * arg2, str const * to, SBError error)<br>
+|<br>
+|<br>
+|      Append the path mapping (from -&gt; to) to the target’s paths mapping list.<br>
+|<br>
+|  Attach(self, attach_info, error)<br>
+|      Attach(SBTarget self, SBAttachInfo attach_info, SBError error) -&gt; SBProcess<br>
+|<br>
+|  AttachToProcessWithID(self, listener, pid, error)<br>
+|      AttachToProcessWithID(SBTarget self, SBListener listener, lldb::pid_t pid, SBError error) -&gt; SBProcess<br>
+|<br>
+|<br>
+|      Attach to process with pid.<br>
+|<br>
+|      @param[in] listener<br>
+|          An optional listener that will receive all process events.<br>
+|          If listener is valid then listener will listen to all<br>
+|          process events. If not valid, then this target’s debugger<br>
+|          (SBTarget::GetDebugger()) will listen to all process events.<br>
+|<br>
+|      @param[in] pid<br>
+|          The process ID to attach to.<br>
+|<br>
+|      @param[out]<br>
+|          An error explaining what went wrong if attach fails.<br>
+|<br>
+|      @return<br>
+|           A process object for the attached process.<br>
+|<br>
+|  AttachToProcessWithName(self, listener, name, wait_for, error)<br>
+|      AttachToProcessWithName(SBTarget self, SBListener listener, str const * name, bool wait_for, SBError error) -&gt; SBProcess<br>
+|<br>
+|<br>
+|      Attach to process with name.<br>
+|<br>
+|      @param[in] listener<br>
+|          An optional listener that will receive all process events.<br>
+|          If listener is valid then listener will listen to all<br>
+|          process events. If not valid, then this target’s debugger<br>
+|          (SBTarget::GetDebugger()) will listen to all process events.<br>
+|<br>
+|      @param[in] name<br>
+|          Basename of process to attach to.<br>
+|<br>
+|      @param[in] wait_for<br>
+|          If true wait for a new instance of ‘name’ to be launched.<br>
+|<br>
+|      @param[out]<br>
+|          An error explaining what went wrong if attach fails.<br>
+|<br>
+|      @return<br>
+|           A process object for the attached process.<br>
+|<br>
+|  BreakpointCreateByAddress(self, address)<br>
+|      BreakpointCreateByAddress(SBTarget self, lldb::addr_t address) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateByLocation(self, *args)<br>
+|      BreakpointCreateByLocation(SBTarget self, str const * file, uint32_t line) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByLocation(SBTarget self, SBFileSpec file_spec, uint32_t line) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByLocation(SBTarget self, SBFileSpec file_spec, uint32_t line, lldb::addr_t offset) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByLocation(SBTarget self, SBFileSpec file_spec, uint32_t line, lldb::addr_t offset, SBFileSpecList module_list) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByLocation(SBTarget self, SBFileSpec file_spec, uint32_t line, uint32_t column, lldb::addr_t offset, SBFileSpecList module_list) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateByName(self, *args)<br>
+|      BreakpointCreateByName(SBTarget self, str const * symbol_name, str const * module_name=None) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByName(SBTarget self, str const * symbol_name) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByName(SBTarget self, str const * symbol_name, uint32_t func_name_type, SBFileSpecList module_list, SBFileSpecList comp_unit_list) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByName(SBTarget self, str const * symbol_name, uint32_t func_name_type, lldb::LanguageType symbol_language, SBFileSpecList module_list, SBFileSpecList comp_unit_list) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateByNames(self, *args)<br>
+|      BreakpointCreateByNames(SBTarget self, str const ** symbol_name, uint32_t name_type_mask, SBFileSpecList module_list, SBFileSpecList comp_unit_list) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByNames(SBTarget self, str const ** symbol_name, uint32_t name_type_mask, lldb::LanguageType symbol_language, SBFileSpecList module_list, SBFileSpecList comp_unit_list) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByNames(SBTarget self, str const ** symbol_name, uint32_t name_type_mask, lldb::LanguageType symbol_language, lldb::addr_t offset, SBFileSpecList module_list, SBFileSpecList comp_unit_list) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateByRegex(self, *args)<br>
+|      BreakpointCreateByRegex(SBTarget self, str const * symbol_name_regex, str const * module_name=None) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByRegex(SBTarget self, str const * symbol_name_regex) -&gt; SBBreakpoint<br>
+|      BreakpointCreateByRegex(SBTarget self, str const * symbol_name_regex, lldb::LanguageType symbol_language, SBFileSpecList module_list, SBFileSpecList comp_unit_list) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateBySBAddress(self, sb_address)<br>
+|      BreakpointCreateBySBAddress(SBTarget self, SBAddress sb_address) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateBySourceRegex(self, *args)<br>
+|      BreakpointCreateBySourceRegex(SBTarget self, str const * source_regex, SBFileSpec source_file, str const * module_name=None) -&gt; SBBreakpoint<br>
+|      BreakpointCreateBySourceRegex(SBTarget self, str const * source_regex, SBFileSpec source_file) -&gt; SBBreakpoint<br>
+|      BreakpointCreateBySourceRegex(SBTarget self, str const * source_regex, SBFileSpecList module_list, SBFileSpecList file_list) -&gt; SBBreakpoint<br>
+|      BreakpointCreateBySourceRegex(SBTarget self, str const * source_regex, SBFileSpecList module_list, SBFileSpecList source_file, SBStringList func_names) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateForException(self, *args)<br>
+|      BreakpointCreateForException(SBTarget self, lldb::LanguageType language, bool catch_bp, bool throw_bp) -&gt; SBBreakpoint<br>
+|      BreakpointCreateForException(SBTarget self, lldb::LanguageType language, bool catch_bp, bool throw_bp, SBStringList extra_args) -&gt; SBBreakpoint<br>
+|<br>
+|  BreakpointCreateFromScript(self, class_name, extra_args, module_list, file_list, request_hardware=False)<br>
+|      BreakpointCreateFromScript(SBTarget self, str const * class_name, SBStructuredData extra_args, SBFileSpecList module_list, SBFileSpecList file_list, bool request_hardware=False) -&gt; SBBreakpoint<br>
+|      BreakpointCreateFromScript(SBTarget self, str const * class_name, SBStructuredData extra_args, SBFileSpecList module_list, SBFileSpecList file_list) -&gt; SBBreakpoint<br>
+|<br>
+|<br>
+|      Create a breakpoint using a scripted resolver.<br>
+|<br>
+|      @param[in] class_name<br>
+|         This is the name of the class that implements a scripted resolver.<br>
+|         The class should have the following signature:<br>
+|         class Resolver:<br>
+|             def <strong>init</strong>(self, bkpt, extra_args):<br>
+|                 # bkpt - the breakpoint for which this is the resolver.  When<br>
+|                 # the resolver finds an interesting address, call AddLocation<br>
+|                 # on this breakpoint to add it.<br>
+|                 #<br>
+|                 # extra_args - an SBStructuredData that can be used to<br>
+|                 # parametrize this instance.  Same as the extra_args passed<br>
+|                 # to BreakpointCreateFromScript.<br>
+|<br>
+|             def <strong>get_depth</strong> (self):<br>
+|                 # This is optional, but if defined, you should return the<br>
+|                 # depth at which you want the callback to be called.  The<br>
+|                 # available options are:<br>
+|                 #    lldb.eSearchDepthModule<br>
+|                 #    lldb.eSearchDepthCompUnit<br>
+|                 # The default if you don’t implement this method is<br>
+|                 # eSearchDepthModule.<br>
+|<br>
+|             def <strong>callback</strong>(self, sym_ctx):<br>
+|                 # sym_ctx - an SBSymbolContext that is the cursor in the<br>
+|                 # search through the program to resolve breakpoints.<br>
+|                 # The sym_ctx will be filled out to the depth requested in<br>
+|                 # <strong>get_depth</strong>.<br>
+|                 # Look in this sym_ctx for new breakpoint locations,<br>
+|                 # and if found use bkpt.AddLocation to add them.<br>
+|                 # Note, you will only get called for modules/compile_units that<br>
+|                 # pass the SearchFilter provided by the module_list &amp; file_list<br>
+|                 # passed into BreakpointCreateFromScript.<br>
+|<br>
+|             def get_short_help(self):<br>
+|                 # Optional, but if implemented return a short string that will<br>
+|                 # be printed at the beginning of the break list output for the<br>
+|                 # breakpoint.<br>
+|<br>
+|      @param[in] extra_args<br>
+|         This is an SBStructuredData object that will get passed to the<br>
+|         constructor of the class in class_name.  You can use this to<br>
+|         reuse the same class, parametrizing it with entries from this<br>
+|         dictionary.<br>
+|<br>
+|      @param module_list<br>
+|         If this is non-empty, this will be used as the module filter in the<br>
+|         SearchFilter created for this breakpoint.<br>
+|<br>
+|      @param file_list<br>
+|         If this is non-empty, this will be used as the comp unit filter in the<br>
+|         SearchFilter created for this breakpoint.<br>
+|<br>
+|      @return<br>
+|          An SBBreakpoint that will set locations based on the logic in the<br>
+|          resolver’s search callback.<br>
+|<br>
+|  BreakpointDelete(self, break_id)<br>
+|      BreakpointDelete(SBTarget self, lldb::break_id_t break_id) -&gt; bool<br>
+|<br>
+|  BreakpointsCreateFromFile(self, *args)<br>
+|      BreakpointsCreateFromFile(SBTarget self, SBFileSpec source_file, SBBreakpointList bkpt_list) -&gt; SBError<br>
+|      BreakpointsCreateFromFile(SBTarget self, SBFileSpec source_file, SBStringList matching_names, SBBreakpointList new_bps) -&gt; SBError<br>
+|<br>
+|<br>
+|      Read breakpoints from source_file and return the newly created<br>
+|      breakpoints in bkpt_list.<br>
+|<br>
+|      @param[in] source_file<br>
+|         The file from which to read the breakpoints<br>
+|<br>
+|      @param[in] matching_names<br>
+|         Only read in breakpoints whose names match one of the names in this<br>
+|         list.<br>
+|<br>
+|      @param[out] bkpt_list<br>
+|         A list of the newly created breakpoints.<br>
+|<br>
+|      @return<br>
+|          An SBError detailing any errors in reading in the breakpoints.<br>
+|<br>
+|  BreakpointsWriteToFile(self, *args)<br>
+|      BreakpointsWriteToFile(SBTarget self, SBFileSpec dest_file) -&gt; SBError<br>
+|      BreakpointsWriteToFile(SBTarget self, SBFileSpec dest_file, SBBreakpointList bkpt_list, bool append=False) -&gt; SBError<br>
+|      BreakpointsWriteToFile(SBTarget self, SBFileSpec dest_file, SBBreakpointList bkpt_list) -&gt; SBError<br>
+|<br>
+|  Clear(self)<br>
+|      Clear(SBTarget self)<br>
+|<br>
+|  ClearModuleLoadAddress(self, module)<br>
+|      ClearModuleLoadAddress(SBTarget self, SBModule module) -&gt; SBError<br>
+|<br>
+|  ClearSectionLoadAddress(self, section)<br>
+|      ClearSectionLoadAddress(SBTarget self, SBSection section) -&gt; SBError<br>
+|<br>
+|  ConnectRemote(self, listener, url, plugin_name, error)<br>
+|      ConnectRemote(SBTarget self, SBListener listener, str const * url, str const * plugin_name, SBError error) -&gt; SBProcess<br>
+|<br>
+|<br>
+|      Connect to a remote debug server with url.<br>
+|<br>
+|      @param[in] listener<br>
+|          An optional listener that will receive all process events.<br>
+|          If listener is valid then listener will listen to all<br>
+|          process events. If not valid, then this target’s debugger<br>
+|          (SBTarget::GetDebugger()) will listen to all process events.<br>
+|<br>
+|      @param[in] url<br>
+|          The url to connect to, e.g., ‘connect://localhost:12345’.<br>
+|<br>
+|      @param[in] plugin_name<br>
+|          The plugin name to be used; can be NULL.<br>
+|<br>
+|      @param[out]<br>
+|          An error explaining what went wrong if the connect fails.<br>
+|<br>
+|      @return<br>
+|           A process object for the connected process.<br>
+|<br>
+|  CreateValueFromAddress(self, name, addr, type)<br>
+|      CreateValueFromAddress(SBTarget self, str const * name, SBAddress addr, SBType type) -&gt; SBValue<br>
+|<br>
+|<br>
+|      Create an SBValue with the given name by treating the memory starting at addr as an entity of type.<br>
+|<br>
+|      @param[in] name<br>
+|          The name of the resultant SBValue<br>
+|<br>
+|      @param[in] addr<br>
+|          The address of the start of the memory region to be used.<br>
+|<br>
+|      @param[in] type<br>
+|          The type to use to interpret the memory starting at addr.<br>
+|<br>
+|      @return<br>
+|          An SBValue of the given type, may be invalid if there was an error reading<br>
+|          the underlying memory.<br>
+|<br>
+|  CreateValueFromData(self, name, data, type)<br>
+|      CreateValueFromData(SBTarget self, str const * name, SBData data, SBType type) -&gt; SBValue<br>
+|<br>
+|  CreateValueFromExpression(self, name, expr)<br>
+|      CreateValueFromExpression(SBTarget self, str const * name, str const * expr) -&gt; SBValue<br>
+|<br>
+|  DeleteAllBreakpoints(self)<br>
+|      DeleteAllBreakpoints(SBTarget self) -&gt; bool<br>
+|<br>
+|  DeleteAllWatchpoints(self)<br>
+|      DeleteAllWatchpoints(SBTarget self) -&gt; bool<br>
+|<br>
+|  DeleteBreakpointName(self, name)<br>
+|      DeleteBreakpointName(SBTarget self, str const * name)<br>
+|<br>
+|  DeleteWatchpoint(self, watch_id)<br>
+|      DeleteWatchpoint(SBTarget self, lldb::watch_id_t watch_id) -&gt; bool<br>
+|<br>
+|  DisableAllBreakpoints(self)<br>
+|      DisableAllBreakpoints(SBTarget self) -&gt; bool<br>
+|<br>
+|  DisableAllWatchpoints(self)<br>
+|      DisableAllWatchpoints(SBTarget self) -&gt; bool<br>
+|<br>
+|  EnableAllBreakpoints(self)<br>
+|      EnableAllBreakpoints(SBTarget self) -&gt; bool<br>
+|<br>
+|  EnableAllWatchpoints(self)<br>
+|      EnableAllWatchpoints(SBTarget self) -&gt; bool<br>
+|<br>
+|  EvaluateExpression(self, *args)<br>
+|      EvaluateExpression(SBTarget self, str const * expr) -&gt; SBValue<br>
+|      EvaluateExpression(SBTarget self, str const * expr, SBExpressionOptions options) -&gt; SBValue<br>
+|<br>
+|  FindBreakpointByID(self, break_id)<br>
+|      FindBreakpointByID(SBTarget self, lldb::break_id_t break_id) -&gt; SBBreakpoint<br>
+|<br>
+|  FindBreakpointsByName(self, name, bkpt_list)<br>
+|      FindBreakpointsByName(SBTarget self, str const * name, SBBreakpointList bkpt_list) -&gt; bool<br>
+|<br>
+|  FindCompileUnits(self, sb_file_spec)<br>
+|      FindCompileUnits(SBTarget self, SBFileSpec sb_file_spec) -&gt; SBSymbolContextList<br>
+|<br>
+|<br>
+|      Find compile units related to *this target and passed source<br>
+|      file.<br>
+|<br>
+|      @param[in] sb_file_spec<br>
+|          A lldb::SBFileSpec object that contains source file<br>
+|          specification.<br>
+|<br>
+|      @return<br>
+|          A lldb::SBSymbolContextList that gets filled in with all of<br>
+|          the symbol contexts for all the matches.<br>
+|<br>
+|  FindFirstGlobalVariable(self, name)<br>
+|      FindFirstGlobalVariable(SBTarget self, str const * name) -&gt; SBValue<br>
+|<br>
+|<br>
+|      Find the first global (or static) variable by name.<br>
+|<br>
+|      @param[in] name<br>
+|          The name of the global or static variable we are looking<br>
+|          for.<br>
+|<br>
+|      @return<br>
+|          An SBValue that gets filled in with the found variable (if any).<br>
+|<br>
+|  FindFirstType(self, type)<br>
+|      FindFirstType(SBTarget self, str const * type) -&gt; SBType<br>
+|<br>
+|  FindFunctions(self, *args)<br>
+|      FindFunctions(SBTarget self, str const * name, uint32_t name_type_mask) -&gt; SBSymbolContextList<br>
+|      FindFunctions(SBTarget self, str const * name) -&gt; SBSymbolContextList<br>
+|<br>
+|<br>
+|      Find functions by name.<br>
+|<br>
+|      @param[in] name<br>
+|          The name of the function we are looking for.<br>
+|<br>
+|      @param[in] name_type_mask<br>
+|          A logical OR of one or more FunctionNameType enum bits that<br>
+|          indicate what kind of names should be used when doing the<br>
+|          lookup. Bits include fully qualified names, base names,<br>
+|          C++ methods, or ObjC selectors.<br>
+|          See FunctionNameType for more details.<br>
+|<br>
+|      @return<br>
+|          A lldb::SBSymbolContextList that gets filled in with all of<br>
+|          the symbol contexts for all the matches.<br>
+|<br>
+|  FindGlobalFunctions(self, name, max_matches, matchtype)<br>
+|      FindGlobalFunctions(SBTarget self, str const * name, uint32_t max_matches, lldb::MatchType matchtype) -&gt; SBSymbolContextList<br>
+|<br>
+|  FindGlobalVariables(self, *args)<br>
+|      FindGlobalVariables(SBTarget self, str const * name, uint32_t max_matches) -&gt; SBValueList<br>
+|      FindGlobalVariables(SBTarget self, str const * name, uint32_t max_matches, lldb::MatchType matchtype) -&gt; SBValueList<br>
+|<br>
+|<br>
+|      Find global and static variables by name.<br>
+|<br>
+|      @param[in] name<br>
+|          The name of the global or static variable we are looking<br>
+|          for.<br>
+|<br>
+|      @param[in] max_matches<br>
+|          Allow the number of matches to be limited to max_matches.<br>
+|<br>
+|      @return<br>
+|          A list of matched variables in an SBValueList.<br>
+|<br>
+|  FindModule(self, file_spec)<br>
+|      FindModule(SBTarget self, SBFileSpec file_spec) -&gt; SBModule<br>
+|<br>
+|  FindSymbols(self, *args)<br>
+|      FindSymbols(SBTarget self, str const * name, lldb::SymbolType type) -&gt; SBSymbolContextList<br>
+|      FindSymbols(SBTarget self, str const * name) -&gt; SBSymbolContextList<br>
+|<br>
+|  FindTypes(self, type)<br>
+|      FindTypes(SBTarget self, str const * type) -&gt; SBTypeList<br>
+|<br>
+|  FindWatchpointByID(self, watch_id)<br>
+|      FindWatchpointByID(SBTarget self, lldb::watch_id_t watch_id) -&gt; SBWatchpoint<br>
+|<br>
+|  GetAddressByteSize(self)<br>
+|      GetAddressByteSize(SBTarget self) -&gt; uint32_t<br>
+|<br>
+|  GetBasicType(self, type)<br>
+|      GetBasicType(SBTarget self, lldb::BasicType type) -&gt; SBType<br>
+|<br>
+|  GetBreakpointAtIndex(self, idx)<br>
+|      GetBreakpointAtIndex(SBTarget self, uint32_t idx) -&gt; SBBreakpoint<br>
+|<br>
+|  GetBreakpointNames(self, names)<br>
+|      GetBreakpointNames(SBTarget self, SBStringList names)<br>
+|<br>
+|  GetBroadcaster(self)<br>
+|      GetBroadcaster(SBTarget self) -&gt; SBBroadcaster<br>
+|<br>
+|  GetByteOrder(self)<br>
+|      GetByteOrder(SBTarget self) -&gt; lldb::ByteOrder<br>
+|<br>
+|  GetCodeByteSize(self)<br>
+|      GetCodeByteSize(SBTarget self) -&gt; uint32_t<br>
+|<br>
+|<br>
+|      Architecture code byte width accessor<br>
+|<br>
+|      @return<br>
+|      The size in 8-bit (host) bytes of a minimum addressable<br>
+|      unit from the Architecture’s code bus<br>
+|<br>
+|  GetCollectingStats(self)<br>
+|      GetCollectingStats(SBTarget self) -&gt; bool<br>
+|<br>
+|  GetDataByteSize(self)<br>
+|      GetDataByteSize(SBTarget self) -&gt; uint32_t<br>
+|<br>
+|<br>
+|      Architecture data byte width accessor<br>
+|<br>
+|      @return<br>
+|      The size in 8-bit (host) bytes of a minimum addressable<br>
+|      unit from the Architecture’s data bus<br>
+|<br>
+|  GetDebugger(self)<br>
+|      GetDebugger(SBTarget self) -&gt; SBDebugger<br>
+|<br>
+|  GetDescription(self, description, description_level)<br>
+|      GetDescription(SBTarget self, SBStream description, lldb::DescriptionLevel description_level) -&gt; bool<br>
+|<br>
+|  GetExecutable(self)<br>
+|      GetExecutable(SBTarget self) -&gt; SBFileSpec<br>
+|<br>
+|  GetInstructions(self, base_addr, buf)<br>
+|      GetInstructions(SBTarget self, SBAddress base_addr, void const * buf) -&gt; SBInstructionList<br>
+|<br>
+|<br>
+|      Disassemble the bytes in a buffer and return them in an SBInstructionList.<br>
+|      Parameters:<br>
+|         base_addr – used for symbolicating the offsets in the byte stream when disassembling<br>
+|         buf       – bytes to be disassembled<br>
+|         size      – (C++) size of the buffer<br>
+|      Returns an SBInstructionList.<br>
+|<br>
+|  GetInstructionsWithFlavor(self, base_addr, flavor_string, buf)<br>
+|      GetInstructionsWithFlavor(SBTarget self, SBAddress base_addr, str const * flavor_string, void const * buf) -&gt; SBInstructionList<br>
+|<br>
+|<br>
+|      Disassemble the bytes in a buffer and return them in an SBInstructionList, with a supplied flavor.<br>
+|      Parameters:<br>
+|         base_addr – used for symbolicating the offsets in the byte stream when disassembling<br>
+|         flavor    – may be ‘intel’ or ‘att’ on x86 targets to specify that style of disassembly<br>
+|         buf       – bytes to be disassembled<br>
+|         size      – (C++) size of the buffer<br>
+|      Returns an SBInstructionList.<br>
+|<br>
+|  GetLaunchInfo(self)<br>
+|      GetLaunchInfo(SBTarget self) -&gt; SBLaunchInfo<br>
+|<br>
+|  GetModuleAtIndex(self, idx)<br>
+|      GetModuleAtIndex(SBTarget self, uint32_t idx) -&gt; SBModule<br>
+|<br>
+|  GetNumBreakpoints(self)<br>
+|      GetNumBreakpoints(SBTarget self) -&gt; uint32_t<br>
+|<br>
+|  GetNumModules(self)<br>
+|      GetNumModules(SBTarget self) -&gt; uint32_t<br>
+|<br>
+|  GetNumWatchpoints(self)<br>
+|      GetNumWatchpoints(SBTarget self) -&gt; uint32_t<br>
+|<br>
+|  GetPlatform(self)<br>
+|      GetPlatform(SBTarget self) -&gt; SBPlatform<br>
+|<br>
+|<br>
+|      Return the platform object associated with the target.<br>
+|<br>
+|      After return, the platform object should be checked for<br>
+|      validity.<br>
+|<br>
+|      @return<br>
+|          A platform object.<br>
+|<br>
+|  GetProcess(self)<br>
+|      GetProcess(SBTarget self) -&gt; SBProcess<br>
+|<br>
+|  GetSourceManager(self)<br>
+|      GetSourceManager(SBTarget self) -&gt; SBSourceManager<br>
+|<br>
+|  GetStackRedZoneSize(self)<br>
+|      GetStackRedZoneSize(SBTarget self) -&gt; lldb::addr_t<br>
+|<br>
+|  GetStatistics(self)<br>
+|      GetStatistics(SBTarget self) -&gt; SBStructuredData<br>
+|<br>
+|  GetTriple(self)<br>
+|      GetTriple(SBTarget self) -&gt; str const *<br>
+|<br>
+|  GetWatchpointAtIndex(self, idx)<br>
+|      GetWatchpointAtIndex(SBTarget self, uint32_t idx) -&gt; SBWatchpoint<br>
+|<br>
+|  Install(self)<br>
+|      Install(SBTarget self) -&gt; SBError<br>
+|<br>
+|<br>
+|      Install any binaries that need to be installed.<br>
+|<br>
+|      This function does nothing when debugging on the host system.<br>
+|      When connected to remote platforms, the target’s main executable<br>
+|      and any modules that have their install path set will be<br>
+|      installed on the remote platform. If the main executable doesn’t<br>
+|      have an install location set, it will be installed in the remote<br>
+|      platform’s working directory.<br>
+|<br>
+|      @return<br>
+|          An error describing anything that went wrong during<br>
+|          installation.<br>
+|<br>
+|  IsValid(self)<br>
+|      IsValid(SBTarget self) -&gt; bool<br>
+|<br>
+|  Launch(self, *args)<br>
+|      Launch(SBTarget self, SBListener listener, str const ** argv, str const ** envp, str const * stdin_path, str const * stdout_path, str const * stderr_path, str const * working_directory, uint32_t launch_flags, bool stop_at_entry, SBError error) -&gt; SBProcess<br>
+|      Launch(SBTarget self, SBLaunchInfo launch_info, SBError error) -&gt; SBProcess<br>
+|<br>
+|<br>
+|      Launch a new process.<br>
+|<br>
+|      Launch a new process by spawning a new process using the<br>
+|      target object’s executable module’s file as the file to launch.<br>
+|      Arguments are given in argv, and the environment variables<br>
+|      are in envp. Standard input and output files can be<br>
+|      optionally re-directed to stdin_path, stdout_path, and<br>
+|      stderr_path.<br>
+|<br>
+|      @param[in] listener<br>
+|          An optional listener that will receive all process events.<br>
+|          If listener is valid then listener will listen to all<br>
+|          process events. If not valid, then this target’s debugger<br>
+|          (SBTarget::GetDebugger()) will listen to all process events.<br>
+|<br>
+|      @param[in] argv<br>
+|          The argument array.<br>
+|<br>
+|      @param[in] envp<br>
+|          The environment array.<br>
+|<br>
+|      @param[in] launch_flags<br>
+|          Flags to modify the launch (@see lldb::LaunchFlags)<br>
+|<br>
+|      @param[in] stdin_path<br>
+|          The path to use when re-directing the STDIN of the new<br>
+|          process. If all stdXX_path arguments are NULL, a pseudo<br>
+|          terminal will be used.<br>
+|<br>
+|      @param[in] stdout_path<br>
+|          The path to use when re-directing the STDOUT of the new<br>
+|          process. If all stdXX_path arguments are NULL, a pseudo<br>
+|          terminal will be used.<br>
+|<br>
+|      @param[in] stderr_path<br>
+|          The path to use when re-directing the STDERR of the new<br>
+|          process. If all stdXX_path arguments are NULL, a pseudo<br>
+|          terminal will be used.<br>
+|<br>
+|      @param[in] working_directory<br>
+|          The working directory to have the child process run in<br>
+|<br>
+|      @param[in] launch_flags<br>
+|          Some launch options specified by logical OR’ing<br>
+|          lldb::LaunchFlags enumeration values together.<br>
+|<br>
+|      @param[in] stop_at_entry<br>
+|          If false do not stop the inferior at the entry point.<br>
+|<br>
+|      @param[out]<br>
+|          An error object. Contains the reason if there is some failure.<br>
+|<br>
+|      @return<br>
+|           A process object for the newly created process.<br>
+|<br>
+|      For example,<br>
+|<br>
+|          process = target.Launch(self.dbg.GetListener(), None, None,<br>
+|                                  None, ‘/tmp/stdout.txt’, None,<br>
+|                                  None, 0, False, error)<br>
+|<br>
+|      launches a new process by passing nothing for both the args and the envs<br>
+|      and redirect the standard output of the inferior to the /tmp/stdout.txt<br>
+|      file. It does not specify a working directory so that the debug server<br>
+|      will use its idea of what the current working directory is for the<br>
+|      inferior. Also, we ask the debugger not to stop the inferior at the<br>
+|      entry point. If no breakpoint is specified for the inferior, it should<br>
+|      run to completion if no user interaction is required.<br>
+|<br>
+|  LaunchSimple(self, argv, envp, working_directory)<br>
+|      LaunchSimple(SBTarget self, str const ** argv, str const ** envp, str const * working_directory) -&gt; SBProcess<br>
+|<br>
+|<br>
+|      Launch a new process with sensible defaults.<br>
+|<br>
+|      @param[in] argv<br>
+|          The argument array.<br>
+|<br>
+|      @param[in] envp<br>
+|          The environment array.<br>
+|<br>
+|      @param[in] working_directory<br>
+|          The working directory to have the child process run in<br>
+|<br>
+|      Default: listener<br>
+|          Set to the target’s debugger (SBTarget::GetDebugger())<br>
+|<br>
+|      Default: launch_flags<br>
+|          Empty launch flags<br>
+|<br>
+|      Default: stdin_path<br>
+|      Default: stdout_path<br>
+|      Default: stderr_path<br>
+|          A pseudo terminal will be used.<br>
+|<br>
+|      @return<br>
+|           A process object for the newly created process.<br>
+|<br>
+|      For example,<br>
+|<br>
+|          process = target.LaunchSimple([‘X’, ‘Y’, ‘Z’], None, os.getcwd())<br>
+|<br>
+|      launches a new process by passing ‘X’, ‘Y’, ‘Z’ as the args to the<br>
+|      executable.<br>
+|<br>
+|  LoadCore(self, *args)<br>
+|      LoadCore(SBTarget self, str const * core_file) -&gt; SBProcess<br>
+|      LoadCore(SBTarget self, str const * core_file, SBError error) -&gt; SBProcess<br>
+|<br>
+|<br>
+|      Load a core file<br>
+|<br>
+|      @param[in] core_file<br>
+|          File path of the core dump.<br>
+|<br>
+|      @param[out] error<br>
+|          An error explaining what went wrong if the operation fails.<br>
+|          (Optional)<br>
+|<br>
+|      @return<br>
+|           A process object for the newly created core file.<br>
+|<br>
+|      For example,<br>
+|<br>
+|          process = target.LoadCore(’./a.out.core’)<br>
+|<br>
+|      loads a new core file and returns the process object.<br>
+|<br>
+|  ReadInstructions(self, *args)<br>
+|      ReadInstructions(SBTarget self, SBAddress base_addr, uint32_t count) -&gt; SBInstructionList<br>
+|      ReadInstructions(SBTarget self, SBAddress base_addr, uint32_t count, str const * flavor_string) -&gt; SBInstructionList<br>
+|<br>
+|<br>
+|      Disassemble a specified number of instructions starting at an address.<br>
+|      Parameters:<br>
+|         base_addr       – the address to start disassembly from<br>
+|         count           – the number of instructions to disassemble<br>
+|         flavor_string   – may be ‘intel’ or ‘att’ on x86 targets to specify that style of disassembly<br>
+|      Returns an SBInstructionList.<br>
+|<br>
+|  ReadMemory(self, addr, buf, error)<br>
+|      ReadMemory(SBTarget self, SBAddress addr, void * buf, SBError error) -&gt; size_t<br>
+|<br>
+|<br>
+|      Read target memory. If a target process is running then memory<br>
+|      is read from here. Otherwise the memory is read from the object<br>
+|      files. For a target whose bytes are sized as a multiple of host<br>
+|      bytes, the data read back will preserve the target’s byte order.<br>
+|<br>
+|      @param[in] addr<br>
+|          A target address to read from.<br>
+|<br>
+|      @param[out] buf<br>
+|          The buffer to read memory into.<br>
+|<br>
+|      @param[in] size<br>
+|          The maximum number of host bytes to read in the buffer passed<br>
+|          into this call<br>
+|<br>
+|      @param[out] error<br>
+|          Error information is written here if the memory read fails.<br>
+|<br>
+|      @return<br>
+|          The amount of data read in host bytes.<br>
+|<br>
+|  RemoveModule(self, module)<br>
+|      RemoveModule(SBTarget self, SBModule module) -&gt; bool<br>
+|<br>
+|  ResolveFileAddress(self, file_addr)<br>
+|      ResolveFileAddress(SBTarget self, lldb::addr_t file_addr) -&gt; SBAddress<br>
+|<br>
+|<br>
+|      Resolve a current file address into a section offset address.<br>
+|<br>
+|      @param[in] file_addr<br>
+|<br>
+|      @return<br>
+|          An SBAddress which will be valid if…<br>
+|<br>
+|  ResolveLoadAddress(self, vm_addr)<br>
+|      ResolveLoadAddress(SBTarget self, lldb::addr_t vm_addr) -&gt; SBAddress<br>
+|<br>
+|  ResolvePastLoadAddress(self, stop_id, vm_addr)<br>
+|      ResolvePastLoadAddress(SBTarget self, uint32_t stop_id, lldb::addr_t vm_addr) -&gt; SBAddress<br>
+|<br>
+|  ResolveSymbolContextForAddress(self, addr, resolve_scope)<br>
+|      ResolveSymbolContextForAddress(SBTarget self, SBAddress addr, uint32_t resolve_scope) -&gt; SBSymbolContext<br>
+|<br>
+|  SetCollectingStats(self, v)<br>
+|      SetCollectingStats(SBTarget self, bool v)<br>
+|<br>
+|  SetLaunchInfo(self, launch_info)<br>
+|      SetLaunchInfo(SBTarget self, SBLaunchInfo launch_info)<br>
+|<br>
+|  SetModuleLoadAddress(self, module, sections_offset)<br>
+|      SetModuleLoadAddress(SBTarget self, SBModule module, int64_t sections_offset) -&gt; SBError<br>
+|<br>
+|  SetSectionLoadAddress(self, section, section_base_addr)<br>
+|      SetSectionLoadAddress(SBTarget self, SBSection section, lldb::addr_t section_base_addr) -&gt; SBError<br>
+|<br>
+|  WatchAddress(self, addr, size, read, write, error)<br>
+|      WatchAddress(SBTarget self, lldb::addr_t addr, size_t size, bool read, bool write, SBError error) -&gt; SBWatchpoint<br>
+|<br>
+|  <strong>bool</strong> = <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>del</strong> lambda self<br>
+|<br>
+|  <strong>eq</strong>(self, rhs)<br>
+|      Return self==value.<br>
+|<br>
+|  <strong>getattr</strong> lambda self, name<br>
+|<br>
+|  <strong>init</strong>(self, *args)<br>
+|      <strong>init</strong>(lldb::SBTarget self) -&gt; SBTarget<br>
+|      <strong>init</strong>(lldb::SBTarget self, SBTarget rhs) -&gt; SBTarget<br>
+|<br>
+|  <strong>ne</strong>(self, rhs)<br>
+|      Return self!=value.<br>
+|<br>
+|  <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>repr</strong> = _swig_repr(self)<br>
+|<br>
+|  <strong>setattr</strong> lambda self, name, value<br>
+|<br>
+|  <strong>str</strong>(self)<br>
+|      <strong>str</strong>(SBTarget self) -&gt; PyObject *<br>
+|<br>
+|  breakpoint_iter(self)<br>
+|<br>
+|  get_modules_access_object(self)<br>
+|      An accessor function that returns a modules_access() object which allows lazy module access from a lldb.SBTarget object.<br>
+|<br>
+|  get_modules_array(self)<br>
+|      An accessor function that returns a list() that contains all modules in a lldb.SBTarget object.<br>
+|<br>
+|  module_iter(self)<br>
+|<br>
+|  watchpoint_iter(self)</p>
+<table>
+<thead>
+<tr>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static methods defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>EventIsTargetEvent(event)</td>
+</tr>
+<tr>
+<td>EventIsTargetEvent(SBEvent event) -&gt; bool</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>GetBroadcasterClassName()</td>
+</tr>
+<tr>
+<td>GetBroadcasterClassName() -&gt; str const *</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>GetModuleAtIndexFromEvent(idx, event)</td>
+</tr>
+<tr>
+<td>GetModuleAtIndexFromEvent(uint32_t const idx, SBEvent event) -&gt; SBModule</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>GetNumModulesFromEvent(event)</td>
+</tr>
+<tr>
+<td>GetNumModulesFromEvent(SBEvent event) -&gt; uint32_t</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>GetTargetFromEvent(event)</td>
+</tr>
+<tr>
+<td>GetTargetFromEvent(SBEvent event) -&gt; SBTarget</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_destroy</strong> = delete_SBTarget(…)</td>
+</tr>
+<tr>
+<td>delete_SBTarget(SBTarget self)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data descriptors defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>dict</strong></td>
+</tr>
+<tr>
+<td>dictionary for instance variables (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>weakref</strong></td>
+</tr>
+<tr>
+<td>list of weak references to the object (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>addr_size</td>
+</tr>
+<tr>
+<td>A read only property that returns the size in bytes of an address for this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>broadcaster</td>
+</tr>
+<tr>
+<td>A read only property that an lldb object that represents the broadcaster (lldb.SBBroadcaster) for this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>byte_order</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb enumeration value (lldb.eByteOrderLittle, lldb.eByteOrderBig, lldb.eByteOrderInvalid) that represents the byte order for this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>code_byte_size</td>
+</tr>
+<tr>
+<td>A read only property that returns the size in host bytes of a byte in the code address space for this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>data_byte_size</td>
+</tr>
+<tr>
+<td>A read only property that returns the size in host bytes of a byte in the data address space for this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>debugger</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb object that represents the debugger (lldb.SBDebugger) that owns this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>executable</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb object that represents the main executable module (lldb.SBModule) for this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>module</td>
+</tr>
+<tr>
+<td>A read only property that returns an object that implements python operator overloading with the square brackets().\n    target.module[<int>] allows array access to any modules.\n    target.module[<str>] allows access to modules by basename, full path, or uuid string value.\n    target.module[uuid.UUID()] allows module access by UUID.\n    target.module[re] allows module access using a regular expression that matches the module full path.</str></int></td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>modules</td>
+</tr>
+<tr>
+<td>A read only property that returns a list() of lldb.SBModule objects contained in this target. This list is a list all modules that the target currently is tracking (the main executable and all dependent shared libraries).</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>num_breakpoints</td>
+</tr>
+<tr>
+<td>A read only property that returns the number of breakpoints that this target has as an integer.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>num_watchpoints</td>
+</tr>
+<tr>
+<td>A read only property that returns the number of watchpoints that this target has as an integer.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>platform</td>
+</tr>
+<tr>
+<td>A read only property that returns the platform associated with with this target.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>process</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb object that represents the process (lldb.SBProcess) that this target owns.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>triple</td>
+</tr>
+<tr>
+<td>A read only property that returns the target triple (arch-vendor-os) for this target as a string.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data and other attributes defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>hash</strong> = None</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_getmethods</strong> = {‘addr_size’: &lt;function SBTarget.GetAddressByteS…</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_setmethods</strong> = {}</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>eBroadcastBitBreakpointChanged = 1</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>eBroadcastBitModulesLoaded = 2</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>eBroadcastBitModulesUnloaded = 4</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>eBroadcastBitSymbolsLoaded = 16</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>eBroadcastBitWatchpointChanged = 8</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>modules_access = &lt;class ‘lldb.SBTarget.modules_access’&gt;</td>
+</tr>
+<tr>
+<td>A helper object that will lazily hand out lldb.SBModule objects for a target when supplied an index, or by full or partial path.</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### SBSection Python Help</span><br></pre></td></tr></table></figure>
+<p>Help on SBSection in module lldb object:</p>
+<p>class SBSection(builtins.object)<br>
+|  SBSection(*args)<br>
+|<br>
+|  Represents an executable image section.<br>
+|<br>
+|  SBSection supports iteration through its subsection, represented as SBSection<br>
+|  as well.  For example,<br>
+|<br>
+|      for sec in exe_module:<br>
+|          if sec.GetName() == ‘__TEXT’:<br>
+|              print sec<br>
+|              break<br>
+|      print INDENT + ‘Number of subsections: %d’ % sec.GetNumSubSections()<br>
+|      for subsec in sec:<br>
+|          print INDENT + repr(subsec)<br>
+|<br>
+|  produces:<br>
+|<br>
+|  [0x0000000100000000-0x0000000100002000) a.out.__TEXT<br>
+|      Number of subsections: 6<br>
+|      [0x0000000100001780-0x0000000100001d5c) a.out.__TEXT.__text<br>
+|      [0x0000000100001d5c-0x0000000100001da4) a.out.__TEXT.__stubs<br>
+|      [0x0000000100001da4-0x0000000100001e2c) a.out.__TEXT.__stub_helper<br>
+|      [0x0000000100001e2c-0x0000000100001f10) a.out.__TEXT.__cstring<br>
+|      [0x0000000100001f10-0x0000000100001f68) a.out.__TEXT.__unwind_info<br>
+|      [0x0000000100001f68-0x0000000100001ff8) a.out.__TEXT.__eh_frame<br>
+|<br>
+|  See also SBModule.<br>
+|<br>
+|  Methods defined here:<br>
+|<br>
+|  FindSubSection(self, sect_name)<br>
+|      FindSubSection(SBSection self, str const * sect_name) -&gt; SBSection<br>
+|<br>
+|  GetByteSize(self)<br>
+|      GetByteSize(SBSection self) -&gt; lldb::addr_t<br>
+|<br>
+|  GetDescription(self, description)<br>
+|      GetDescription(SBSection self, SBStream description) -&gt; bool<br>
+|<br>
+|  GetFileAddress(self)<br>
+|      GetFileAddress(SBSection self) -&gt; lldb::addr_t<br>
+|<br>
+|  GetFileByteSize(self)<br>
+|      GetFileByteSize(SBSection self) -&gt; uint64_t<br>
+|<br>
+|  GetFileOffset(self)<br>
+|      GetFileOffset(SBSection self) -&gt; uint64_t<br>
+|<br>
+|  GetLoadAddress(self, target)<br>
+|      GetLoadAddress(SBSection self, SBTarget target) -&gt; lldb::addr_t<br>
+|<br>
+|  GetName(self)<br>
+|      GetName(SBSection self) -&gt; str const *<br>
+|<br>
+|  GetNumSubSections(self)<br>
+|      GetNumSubSections(SBSection self) -&gt; size_t<br>
+|<br>
+|  GetParent(self)<br>
+|      GetParent(SBSection self) -&gt; SBSection<br>
+|<br>
+|  GetPermissions(self)<br>
+|      GetPermissions(SBSection self) -&gt; uint32_t<br>
+|<br>
+|  GetSectionData(self, *args)<br>
+|      GetSectionData(SBSection self) -&gt; SBData<br>
+|      GetSectionData(SBSection self, uint64_t offset, uint64_t size) -&gt; SBData<br>
+|<br>
+|  GetSectionType(self)<br>
+|      GetSectionType(SBSection self) -&gt; lldb::SectionType<br>
+|<br>
+|  GetSubSectionAtIndex(self, idx)<br>
+|      GetSubSectionAtIndex(SBSection self, size_t idx) -&gt; SBSection<br>
+|<br>
+|  GetTargetByteSize(self)<br>
+|      GetTargetByteSize(SBSection self) -&gt; uint32_t<br>
+|<br>
+|<br>
+|      Return the size of a target’s byte represented by this section<br>
+|      in numbers of host bytes. Note that certain architectures have<br>
+|      varying minimum addressable unit (i.e. byte) size for their<br>
+|      CODE or DATA buses.<br>
+|<br>
+|      @return<br>
+|          The number of host (8-bit) bytes needed to hold a target byte<br>
+|<br>
+|  IsValid(self)<br>
+|      IsValid(SBSection self) -&gt; bool<br>
+|<br>
+|  <strong>bool</strong> = <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>del</strong> lambda self<br>
+|<br>
+|  <strong>eq</strong>(self, rhs)<br>
+|      Return self==value.<br>
+|<br>
+|  <strong>getattr</strong> lambda self, name<br>
+|<br>
+|  <strong>init</strong>(self, *args)<br>
+|      <strong>init</strong>(lldb::SBSection self) -&gt; SBSection<br>
+|      <strong>init</strong>(lldb::SBSection self, SBSection rhs) -&gt; SBSection<br>
+|<br>
+|  <strong>iter</strong>(self)<br>
+|<br>
+|  <strong>len</strong>(self)<br>
+|<br>
+|  <strong>ne</strong>(self, rhs)<br>
+|      Return self!=value.<br>
+|<br>
+|  <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>repr</strong> = _swig_repr(self)<br>
+|<br>
+|  <strong>setattr</strong> lambda self, name, value<br>
+|<br>
+|  <strong>str</strong>(self)<br>
+|      <strong>str</strong>(SBSection self) -&gt; PyObject *<br>
+|<br>
+|  get_addr(self)</p>
+<table>
+<thead>
+<tr>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static methods defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_destroy</strong> = delete_SBSection(…)</td>
+</tr>
+<tr>
+<td>delete_SBSection(SBSection self)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data descriptors defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>dict</strong></td>
+</tr>
+<tr>
+<td>dictionary for instance variables (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>weakref</strong></td>
+</tr>
+<tr>
+<td>list of weak references to the object (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>addr</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb object that represents the start address (lldb.SBAddress) for this section.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>data</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb object that represents the bytes for this section (lldb.SBData) for this section.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>file_addr</td>
+</tr>
+<tr>
+<td>A read only property that returns an integer that represents the starting “file” address for this section, or the address of the section in the object file in which it is defined.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>file_offset</td>
+</tr>
+<tr>
+<td>A read only property that returns the file offset in bytes of this section as an integer.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>file_size</td>
+</tr>
+<tr>
+<td>A read only property that returns the file size in bytes of this section as an integer.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>name</td>
+</tr>
+<tr>
+<td>A read only property that returns the name of this section as a string.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>size</td>
+</tr>
+<tr>
+<td>A read only property that returns the size in bytes of this section as an integer.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>target_byte_size</td>
+</tr>
+<tr>
+<td>A read only property that returns the size of a target byte represented by this section as a number of host bytes.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>type</td>
+</tr>
+<tr>
+<td>A read only property that returns an lldb enumeration value (see enumerations that start with “lldb.eSectionType”) that represents the type of this section (code, data, etc.).</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data and other attributes defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>hash</strong> = None</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_getmethods</strong> = {‘addr’: <function sbsection.get_addr>, ‘data’: …</function></td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_setmethods</strong> = {}</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### SBFileSpec Python Help</span><br></pre></td></tr></table></figure>
+<p>class SBFileSpec(builtins.object)<br>
+|  SBFileSpec(*args)<br>
+|<br>
+|  Represents a file specification that divides the path into a directory and<br>
+|  basename.  The string values of the paths are put into uniqued string pools<br>
+|  for fast comparisons and efficient memory usage.<br>
+|<br>
+|  For example, the following code<br>
+|<br>
+|          lineEntry = context.GetLineEntry()<br>
+|          self.expect(lineEntry.GetFileSpec().GetDirectory(), ‘The line entry should have the correct directory’,<br>
+|                      exe=False,<br>
+|              substrs = [self.mydir])<br>
+|          self.expect(lineEntry.GetFileSpec().GetFilename(), ‘The line entry should have the correct filename’,<br>
+|                      exe=False,<br>
+|              substrs = [‘main.c’])<br>
+|          self.assertTrue(lineEntry.GetLine() == self.line,<br>
+|                          'The line entry’s line number should match ')<br>
+|<br>
+|  gets the line entry from the symbol context when a thread is stopped.<br>
+|  It gets the file spec corresponding to the line entry and checks that<br>
+|  the filename and the directory matches what we expect.<br>
+|<br>
+|  Methods defined here:<br>
+|<br>
+|  AppendPathComponent(self, file_or_directory)<br>
+|      AppendPathComponent(SBFileSpec self, str const * file_or_directory)<br>
+|<br>
+|  Exists(self)<br>
+|      Exists(SBFileSpec self) -&gt; bool<br>
+|<br>
+|  GetDescription(self, description)<br>
+|      GetDescription(SBFileSpec self, SBStream description) -&gt; bool<br>
+|<br>
+|  GetDirectory(self)<br>
+|      GetDirectory(SBFileSpec self) -&gt; str const *<br>
+|<br>
+|  GetFilename(self)<br>
+|      GetFilename(SBFileSpec self) -&gt; str const *<br>
+|<br>
+|  GetPath(self, dst_path, dst_len)<br>
+|      GetPath(SBFileSpec self, str * dst_path, size_t dst_len) -&gt; uint32_t<br>
+|<br>
+|  IsValid(self)<br>
+|      IsValid(SBFileSpec self) -&gt; bool<br>
+|<br>
+|  ResolveExecutableLocation(self)<br>
+|      ResolveExecutableLocation(SBFileSpec self) -&gt; bool<br>
+|<br>
+|  SetDirectory(self, directory)<br>
+|      SetDirectory(SBFileSpec self, str const * directory)<br>
+|<br>
+|  SetFilename(self, filename)<br>
+|      SetFilename(SBFileSpec self, str const * filename)<br>
+|<br>
+|  <strong>bool</strong> = <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>del</strong> lambda self<br>
+|<br>
+|  <strong>eq</strong>(self, other)<br>
+|      Return self==value.<br>
+|<br>
+|  <strong>get_fullpath</strong>(self)<br>
+|<br>
+|  <strong>getattr</strong> lambda self, name<br>
+|<br>
+|  <strong>init</strong>(self, *args)<br>
+|      <strong>init</strong>(lldb::SBFileSpec self) -&gt; SBFileSpec<br>
+|      <strong>init</strong>(lldb::SBFileSpec self, SBFileSpec rhs) -&gt; SBFileSpec<br>
+|      <strong>init</strong>(lldb::SBFileSpec self, str const * path) -&gt; SBFileSpec<br>
+|      <strong>init</strong>(lldb::SBFileSpec self, str const * path, bool resolve) -&gt; SBFileSpec<br>
+|<br>
+|  <strong>ne</strong>(self, other)<br>
+|      Return self!=value.<br>
+|<br>
+|  <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>repr</strong> = _swig_repr(self)<br>
+|<br>
+|  <strong>setattr</strong> lambda self, name, value<br>
+|<br>
+|  <strong>str</strong>(self)<br>
+|      <strong>str</strong>(SBFileSpec self) -&gt; PyObject *</p>
+<table>
+<thead>
+<tr>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static methods defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>ResolvePath(src_path, dst_path, dst_len)</td>
+</tr>
+<tr>
+<td>ResolvePath(str const * src_path, str * dst_path, size_t dst_len) -&gt; int</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_destroy</strong> = delete_SBFileSpec(…)</td>
+</tr>
+<tr>
+<td>delete_SBFileSpec(SBFileSpec self)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data descriptors defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>dict</strong></td>
+</tr>
+<tr>
+<td>dictionary for instance variables (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>weakref</strong></td>
+</tr>
+<tr>
+<td>list of weak references to the object (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>basename</td>
+</tr>
+<tr>
+<td>A read only property that returns the path basename as a python string.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>dirname</td>
+</tr>
+<tr>
+<td>A read only property that returns the path directory name as a python string.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>exists</td>
+</tr>
+<tr>
+<td>A read only property that returns a boolean value that indicates if the file exists.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>fullpath</td>
+</tr>
+<tr>
+<td>A read only property that returns the fullpath as a python string.</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data and other attributes defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>hash</strong> = None</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_getmethods</strong> = {‘basename’: <function sbfilespec.getfilename>, …</function></td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_setmethods</strong> = {}</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### SBValueList Python Help</span><br></pre></td></tr></table></figure>
+<p>class SBValueList(builtins.object)<br>
+|  SBValueList(*args)<br>
+|<br>
+|  Represents a collection of SBValues.  Both SBFrame’s GetVariables() and<br>
+|  GetRegisters() return a SBValueList.<br>
+|<br>
+|  SBValueList supports SBValue iteration. For example (from test/lldbutil.py),<br>
+|<br>
+|  def get_registers(frame, kind):<br>
+|      ‘’‘Returns the registers given the frame and the kind of registers desired.<br>
+|<br>
+|      Returns None if there’s no such kind.<br>
+|      ‘’’<br>
+|      registerSet = frame.GetRegisters() # Return type of SBValueList.<br>
+|      for value in registerSet:<br>
+|          if kind.lower() in value.GetName().lower():<br>
+|              return value<br>
+|<br>
+|      return None<br>
+|<br>
+|  def get_GPRs(frame):<br>
+|      ‘’‘Returns the general purpose registers of the frame as an SBValue.<br>
+|<br>
+|      The returned SBValue object is iterable.  An example:<br>
+|          …<br>
+|          from lldbutil import get_GPRs<br>
+|          regs = get_GPRs(frame)<br>
+|          for reg in regs:<br>
+|              print(’%s =&gt; %s’ % (reg.GetName(), reg.GetValue()))<br>
+|          …<br>
+|      ‘’’<br>
+|      return get_registers(frame, ‘general purpose’)<br>
+|<br>
+|  def get_FPRs(frame):<br>
+|      ‘’‘Returns the floating point registers of the frame as an SBValue.<br>
+|<br>
+|      The returned SBValue object is iterable.  An example:<br>
+|          …<br>
+|          from lldbutil import get_FPRs<br>
+|          regs = get_FPRs(frame)<br>
+|          for reg in regs:<br>
+|              print(’%s =&gt; %s’ % (reg.GetName(), reg.GetValue()))<br>
+|          …<br>
+|      ‘’’<br>
+|      return get_registers(frame, ‘floating point’)<br>
+|<br>
+|  def get_ESRs(frame):<br>
+|      ‘’‘Returns the exception state registers of the frame as an SBValue.<br>
+|<br>
+|      The returned SBValue object is iterable.  An example:<br>
+|          …<br>
+|          from lldbutil import get_ESRs<br>
+|          regs = get_ESRs(frame)<br>
+|          for reg in regs:<br>
+|              print(’%s =&gt; %s’ % (reg.GetName(), reg.GetValue()))<br>
+|          …<br>
+|      ‘’’<br>
+|      return get_registers(frame, ‘exception state’)<br>
+|<br>
+|  Methods defined here:<br>
+|<br>
+|  Append(self, *args)<br>
+|      Append(SBValueList self, SBValue val_obj)<br>
+|      Append(SBValueList self, SBValueList value_list)<br>
+|<br>
+|  Clear(self)<br>
+|      Clear(SBValueList self)<br>
+|<br>
+|  FindValueObjectByUID(self, uid)<br>
+|      FindValueObjectByUID(SBValueList self, lldb::user_id_t uid) -&gt; SBValue<br>
+|<br>
+|  GetFirstValueByName(self, name)<br>
+|      GetFirstValueByName(SBValueList self, str const * name) -&gt; SBValue<br>
+|<br>
+|  GetSize(self)<br>
+|      GetSize(SBValueList self) -&gt; uint32_t<br>
+|<br>
+|  GetValueAtIndex(self, idx)<br>
+|      GetValueAtIndex(SBValueList self, uint32_t idx) -&gt; SBValue<br>
+|<br>
+|  IsValid(self)<br>
+|      IsValid(SBValueList self) -&gt; bool<br>
+|<br>
+|  <strong>bool</strong> = <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>del</strong> lambda self<br>
+|<br>
+|  <strong>getattr</strong> lambda self, name<br>
+|<br>
+|  <strong>getitem</strong>(self, key)<br>
+|<br>
+|  <strong>init</strong>(self, *args)<br>
+|      <strong>init</strong>(lldb::SBValueList self) -&gt; SBValueList<br>
+|      <strong>init</strong>(lldb::SBValueList self, SBValueList rhs) -&gt; SBValueList<br>
+|<br>
+|  <strong>iter</strong>(self)<br>
+|<br>
+|  <strong>len</strong>(self)<br>
+|<br>
+|  <strong>nonzero</strong>(self)<br>
+|<br>
+|  <strong>repr</strong> = _swig_repr(self)<br>
+|<br>
+|  <strong>setattr</strong> lambda self, name, value<br>
+|<br>
+|  <strong>str</strong>(self)<br>
+|      <strong>str</strong>(SBValueList self) -&gt; PyObject *</p>
+<table>
+<thead>
+<tr>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static methods defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_destroy</strong> = delete_SBValueList(…)</td>
+</tr>
+<tr>
+<td>delete_SBValueList(SBValueList self)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data descriptors defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>dict</strong></td>
+</tr>
+<tr>
+<td>dictionary for instance variables (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>weakref</strong></td>
+</tr>
+<tr>
+<td>list of weak references to the object (if defined)</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>----------------------------------------------------------------------</td>
+</tr>
+<tr>
+<td>Data and other attributes defined here:</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_getmethods</strong> = {}</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><strong>swig_setmethods</strong> = {}</td>
+</tr>
+</tbody>
+</table>
+<pre><code></code></pre>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:196011564@qq.com">咲夜南梦</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2020/08/04/MacOS-LLDB%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/">http://yoursite.com/2020/08/04/MacOS-LLDB%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">咲夜南梦's 博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MacOS/">MacOS    </a><a class="post-meta__tags" href="/tags/LLDB/">LLDB    </a></div><div class="post_share"><div class="social-share" data-image="/img/post.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/alipay.jpg" alt="支付宝"/><div class="post-qr-code__desc">支付宝</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2020/08/04/CTF-MacPwn%E5%88%86%E6%9E%90/"><img class="prev_cover lazyload" data-src="/2020/08/04/CTF-MacPwn分析/1.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CTF-MacPwn分析</div></div></a></div><div class="next-post pull_right"><a href="/2020/07/25/Python-shlex%E5%BA%93/"><img class="next_cover lazyload" data-src="/2020/07/25/Python-shlex库/bg.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Python-shlex库</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/08/04/CTF-MacPwn分析/" title="CTF-MacPwn分析"><img class="relatedPosts_cover lazyload"data-src="/2020/08/04/CTF-MacPwn分析/1.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-08-04</div><div class="relatedPosts_title">CTF-MacPwn分析</div></div></a></div><div class="relatedPosts_item"><a href="/2020/03/12/MacOS-proxy代理/" title="MacOS-proxy代理"><img class="relatedPosts_cover lazyload"data-src="/2020/03/12/MacOS-proxy代理/jsp.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-03-12</div><div class="relatedPosts_title">MacOS-proxy代理</div></div></a></div><div class="relatedPosts_item"><a href="/2020/07/10/MacOS开启TFTP/" title="MacOS开启TFTP功能"><img class="relatedPosts_cover lazyload"data-src="/2020/07/10/MacOS开启TFTP功能/1.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-07-10</div><div class="relatedPosts_title">MacOS开启TFTP功能</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: '560d606afb5e3201949f',
+  clientSecret: 'adf278d9baa268981569ab6db3020b28d99f2aec',
+  repo: '196011564.github.io',
+  owner: '196011564',
+  admin: ['196011564'],
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN',
+  perPage: 10,
+  distractionFreeMode: false,
+  pagerDirection: 'last',
+  createIssueManually: false,
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  try {
+    document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+  } catch (e) {
+    return false
+  }
+}</script></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 咲夜南梦</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><script src="/js/search/local-search.js"></script></body></html>

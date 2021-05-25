@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ThinkPHP-5.0安装教程 | 咲夜南梦's 博客</title><meta name="description" content="ThinkPHP-5.0安装教程"><meta name="keywords" content="ThinkPHP"><meta name="author" content="咲夜南梦,196011564@qq.com"><meta name="copyright" content="咲夜南梦"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="ThinkPHP-5.0安装教程"><meta name="twitter:description" content="ThinkPHP-5.0安装教程"><meta name="twitter:image" content="http://yoursite.com/2020/04/30/ThinkPHP-5.0%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/bg.png"><meta property="og:type" content="article"><meta property="og:title" content="ThinkPHP-5.0安装教程"><meta property="og:url" content="http://yoursite.com/2020/04/30/ThinkPHP-5.0%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"><meta property="og:site_name" content="咲夜南梦's 博客"><meta property="og:description" content="ThinkPHP-5.0安装教程"><meta property="og:image" content="http://yoursite.com/2020/04/30/ThinkPHP-5.0%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/bg.png"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = '1'
+var t = Cookies.get("theme")
+if (autoChangeMode == '1'){
+  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+  const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+  const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+  const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined){
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport){
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      now = new Date();
+      hour = now.getHours();
+      isNight = hour < 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+  }
+  } else if (t == 'light') activateLightMode()
+  else activateDarkMode()
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://yoursite.com/2020/04/30/ThinkPHP-5.0%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"><link rel="prev" title="ARM-常用汇编" href="http://yoursite.com/2020/04/30/ARM-%E6%B1%87%E7%BC%96%E5%AD%A6%E4%B9%A0/"><link rel="next" title="CTF-KernelPwn-tty_operations劫持" href="http://yoursite.com/2020/04/29/CTF-KernelPwn-tty_operations%E5%8A%AB%E6%8C%81/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  highlightShrink: false,
+  isFontAwesomeV5: false
+  
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false
+}</script><meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="咲夜南梦's 博客" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">172</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">51</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">29</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 额外功能</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#null"><span class="toc-number">1.</span> <span class="toc-text">ThinkPHP-5.0</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装教程"><span class="toc-number">1.1.</span> <span class="toc-text">安装教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法一"><span class="toc-number">1.1.1.</span> <span class="toc-text">方法一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Composer安装"><span class="toc-number">1.1.2.</span> <span class="toc-text">Composer安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置下载源-使用默认的源也是可以的-可跳过"><span class="toc-number">1.1.3.</span> <span class="toc-text">设置下载源(使用默认的源也是可以的) [可跳过]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#然后在项目的根目录执行以下代码，将框架载入到项目中"><span class="toc-number">1.1.4.</span> <span class="toc-text">然后在项目的根目录执行以下代码，将框架载入到项目中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#然后就可以看到项目下多了很多文件"><span class="toc-number">1.1.5.</span> <span class="toc-text">然后就可以看到项目下多了很多文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法二"><span class="toc-number">1.1.6.</span> <span class="toc-text">方法二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git方式"><span class="toc-number">1.1.7.</span> <span class="toc-text">Git方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#首先克隆下载应用项目仓库"><span class="toc-number">1.1.8.</span> <span class="toc-text">首先克隆下载应用项目仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#然后切换到tp5目录下面，再克隆核心框架仓库："><span class="toc-number">1.1.9.</span> <span class="toc-text">然后切换到tp5目录下面，再克隆核心框架仓库：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#由于目前仓库默认分支还不是5-0版本，你需要切换到master分支（首先进入thinkphp目录后执行下面的命令）"><span class="toc-number">1.1.10.</span> <span class="toc-text">由于目前仓库默认分支还不是5.0版本，你需要切换到master分支（首先进入thinkphp目录后执行下面的命令）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两个仓库克隆完成后，就完成了ThinkPHP5-0的Git方式下载，如果需要更新核心框架的时候，只需要切换到thinkphp核心目录下面，然后执行："><span class="toc-number">1.1.11.</span> <span class="toc-text">两个仓库克隆完成后，就完成了ThinkPHP5.0的Git方式下载，如果需要更新核心框架的时候，只需要切换到thinkphp核心目录下面，然后执行：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无论你采用什么方式获取的ThinkPHP框架，现在只需要做最后一步来验证是否正常运行。"><span class="toc-number">1.2.</span> <span class="toc-text">无论你采用什么方式获取的ThinkPHP框架，现在只需要做最后一步来验证是否正常运行。</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#在浏览器中输入地址："><span class="toc-number">1.2.1.</span> <span class="toc-text">在浏览器中输入地址：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#http-localhost-tp5-public"><span class="toc-number">1.2.2.</span> <span class="toc-text">http:&#x2F;&#x2F;localhost&#x2F;tp5&#x2F;public&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如果浏览器输出以下信息即可"><span class="toc-number">1.2.3.</span> <span class="toc-text">如果浏览器输出以下信息即可</span></a></li></ol></li></ol></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/2020/04/30/ThinkPHP-5.0安装教程/bg.png)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">咲夜南梦's 博客</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 额外功能</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div><div id="post-info"><div id="post-title"><div class="posttitle">ThinkPHP-5.0安装教程</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2020-04-30<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-05-23</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/ThinkPHP/">ThinkPHP</a></span><div class="post-meta-wordcount"><div class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="post-meta__icon fa fa-comment-o" aria-hidden="true"></i><span>评论数:</span><a href="/2020/04/30/ThinkPHP-5.0%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></div></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div id="article-container"><h1>ThinkPHP-5.0</h1>
+<h2 id="安装教程">安装教程</h2>
+<h3 id="方法一">方法一</h3>
+<hr>
+<h3 id="Composer安装">Composer安装</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -sS https:&#x2F;&#x2F;getcomposer.org&#x2F;installer | php</span><br><span class="line">mv composer.phar &#x2F;usr&#x2F;local&#x2F;bin&#x2F;composer</span><br></pre></td></tr></table></figure>
+<h3 id="设置下载源-使用默认的源也是可以的-可跳过">设置下载源(使用默认的源也是可以的) [可跳过]</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer config -g repo.packagist composer https:&#x2F;&#x2F;packagist.phpcomposer.com</span><br></pre></td></tr></table></figure>
+<h3 id="然后在项目的根目录执行以下代码，将框架载入到项目中">然后在项目的根目录执行以下代码，将框架载入到项目中</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer create-project topthink&#x2F;think&#x3D;5.0.* tp5  --prefer-dist</span><br></pre></td></tr></table></figure>
+<h3 id="然后就可以看到项目下多了很多文件">然后就可以看到项目下多了很多文件</h3>
+<h3 id="方法二">方法二</h3>
+<hr>
+<h3 id="Git方式">Git方式</h3>
+<h3 id="首先克隆下载应用项目仓库">首先克隆下载应用项目仓库</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;top-think&#x2F;think tp5</span><br></pre></td></tr></table></figure>
+<h3 id="然后切换到tp5目录下面，再克隆核心框架仓库：">然后切换到tp5目录下面，再克隆核心框架仓库：</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;top-think&#x2F;framework thinkphp</span><br></pre></td></tr></table></figure>
+<h3 id="由于目前仓库默认分支还不是5-0版本，你需要切换到master分支（首先进入thinkphp目录后执行下面的命令）">由于目前仓库默认分支还不是5.0版本，你需要切换到master分支（首先进入thinkphp目录后执行下面的命令）</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br></pre></td></tr></table></figure>
+<h3 id="两个仓库克隆完成后，就完成了ThinkPHP5-0的Git方式下载，如果需要更新核心框架的时候，只需要切换到thinkphp核心目录下面，然后执行：">两个仓库克隆完成后，就完成了ThinkPHP5.0的Git方式下载，如果需要更新核心框架的时候，只需要切换到thinkphp核心目录下面，然后执行：</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull https:&#x2F;&#x2F;github.com&#x2F;top-think&#x2F;framework</span><br></pre></td></tr></table></figure>
+<h2 id="无论你采用什么方式获取的ThinkPHP框架，现在只需要做最后一步来验证是否正常运行。">无论你采用什么方式获取的ThinkPHP框架，现在只需要做最后一步来验证是否正常运行。</h2>
+<h3 id="在浏览器中输入地址：">在浏览器中输入地址：</h3>
+<h3 id="http-localhost-tp5-public"><a href="http://localhost/tp5/public/" target="_blank" rel="noopener">http://localhost/tp5/public/</a></h3>
+<h3 id="如果浏览器输出以下信息即可">如果浏览器输出以下信息即可</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">:)</span><br><span class="line">ThinkPHP V5</span><br><span class="line">十年磨一剑 - 为API开发设计的高性能框架</span><br><span class="line">[ V5.0 版本由 七牛云 独家赞助发布 ]</span><br><span class="line">十四周年福利</span><br></pre></td></tr></table></figure></div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:196011564@qq.com">咲夜南梦</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2020/04/30/ThinkPHP-5.0%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">http://yoursite.com/2020/04/30/ThinkPHP-5.0%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">咲夜南梦's 博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/ThinkPHP/">ThinkPHP    </a></div><div class="post_share"><div class="social-share" data-image="/img/post.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/alipay.jpg" alt="支付宝"/><div class="post-qr-code__desc">支付宝</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2020/04/30/ARM-%E6%B1%87%E7%BC%96%E5%AD%A6%E4%B9%A0/"><img class="prev_cover lazyload" data-src="/2020/04/30/ARM-常用汇编/bg.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ARM-常用汇编</div></div></a></div><div class="next-post pull_right"><a href="/2020/04/29/CTF-KernelPwn-tty_operations%E5%8A%AB%E6%8C%81/"><img class="next_cover lazyload" data-src="/2020/04/29/CTF-KernelPwn-tty_operations劫持/bg.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CTF-KernelPwn-tty_operations劫持</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/05/23/ThinkPHP-6.0-Model/" title="ThinkPHP-6.0-Model"><img class="relatedPosts_cover lazyload"data-src="/2020/05/23/ThinkPHP-6.0-Model/bg.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-05-23</div><div class="relatedPosts_title">ThinkPHP-6.0-Model</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: '560d606afb5e3201949f',
+  clientSecret: 'adf278d9baa268981569ab6db3020b28d99f2aec',
+  repo: '196011564.github.io',
+  owner: '196011564',
+  admin: ['196011564'],
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN',
+  perPage: 10,
+  distractionFreeMode: false,
+  pagerDirection: 'last',
+  createIssueManually: false,
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  try {
+    document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+  } catch (e) {
+    return false
+  }
+}</script></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 咲夜南梦</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><script src="/js/search/local-search.js"></script></body></html>

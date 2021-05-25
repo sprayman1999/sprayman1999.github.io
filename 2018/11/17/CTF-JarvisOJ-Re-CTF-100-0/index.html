@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CTF-JarvisOJ-Re-CTF_100_0 | 咲夜南梦's 博客</title><meta name="description" content="CTF-JarvisOJ-Re-CTF_100_0"><meta name="keywords" content="CTF,逆向工程"><meta name="author" content="咲夜南梦,196011564@qq.com"><meta name="copyright" content="咲夜南梦"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="CTF-JarvisOJ-Re-CTF_100_0"><meta name="twitter:description" content="CTF-JarvisOJ-Re-CTF_100_0"><meta name="twitter:image" content="http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/20.png"><meta property="og:type" content="article"><meta property="og:title" content="CTF-JarvisOJ-Re-CTF_100_0"><meta property="og:url" content="http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/"><meta property="og:site_name" content="咲夜南梦's 博客"><meta property="og:description" content="CTF-JarvisOJ-Re-CTF_100_0"><meta property="og:image" content="http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/20.png"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = '1'
+var t = Cookies.get("theme")
+if (autoChangeMode == '1'){
+  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+  const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+  const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+  const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined){
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport){
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      now = new Date();
+      hour = now.getHours();
+      isNight = hour < 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+  }
+  } else if (t == 'light') activateLightMode()
+  else activateDarkMode()
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/"><link rel="prev" title="CTF-JarvisOJ-Re-软件密码破解-2" href="http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-%E8%BD%AF%E4%BB%B6%E5%AF%86%E7%A0%81%E7%A0%B4%E8%A7%A3-2/"><link rel="next" title="CTF-JarvisOJ-Re-软件密码破解-1" href="http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-%E8%BD%AF%E4%BB%B6%E5%AF%86%E7%A0%81%E7%A0%B4%E8%A7%A3-1/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  highlightShrink: false,
+  isFontAwesomeV5: false
+  
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false
+}</script><meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="咲夜南梦's 博客" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">172</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">51</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">29</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 额外功能</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/20.png)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">咲夜南梦's 博客</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 额外功能</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div><div id="post-info"><div id="post-title"><div class="posttitle">CTF-JarvisOJ-Re-CTF_100_0</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2018-11-17<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2018-11-21</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/CTF/">CTF</a></span><div class="post-meta-wordcount"><div class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="post-meta__icon fa fa-comment-o" aria-hidden="true"></i><span>评论数:</span><a href="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></div></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div id="article-container"><p>文件下载<a href="CTF_100_0.rar">点击下载</a></p>
+<p>对<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/1.png">进行分析<br>
+接下来我将在 WinXP的虚拟机下进行调试<br>
+1、先进行查壳<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/2.png"><br>
+Not packed 表示无壳，那么我们直接进行调试了。<br>
+2、导入OD<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/3.png"><br>
+3、由于没有加壳 所以可以直接搜索字符串，猜测flag的位置<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/4.png"><br>
+4、由于习惯问题，mfc程序的代码一般位于 基址偏移+0x10000  开始<br>
+所以直接往上拉 即可<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/5.png"><br>
+5、注意到上面有flag 我们猜测下面几个地址是主要的代码位置，flag很可能会在这里出现，但是很明显的是，flag被隐藏了。很可能是被拆成了非 unicode的字符或者直接用ascii的十六进制 进行保存，使字符无法被搜索到<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/6.png"><br>
+6、我们双击进入你赢了，毕竟这个比较显眼，一般都是通过 MessageBoxA 来告诉你一些信息<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/7.png"><br>
+7、将代码拉到头部<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/8.png"><br>
+很明显这里是一个call的内部。具体为什么这里不方便阐述。</p>
+<p>8、我们在这里下cc断点，然后运行程序看看 看看会不会被断下，如果断下，说明这个按钮的事件中必然运行到了此call，那么我们就可以大致的确定flag的位置了<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/9.png"><br>
+由结果证明，按钮的事件确实和这个call有关联<br>
+9、接下来就要单步分析了，因为一步一步分析较慢，繁琐，请允许我在一定的代码上写上注释，且不对无关代码进行分析<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/10.png"><br>
+看到mov eax,005779F8 时，我们就要警惕了，因为这很可能要进行比较或者将假码进行变换，于是我们单步到该地址。<br>
+Eax表示指针已经指向假码了，<br>
+Add esp,0xC 对分析无用。<br>
+然后看到<br>
+00401C0D  |.  8D50 02       lea     edx,dword ptr ds:[eax+0x2]<br>
+00401C10  |&gt;  66:8B08       /mov     cx,word ptr ds:[eax]       ;  将假码依次放入cx<br>
+00401C13  |.  83C0 02       |add     eax,0x2                  ;  偏移 一个位置  指向下一位字符<br>
+00401C16  |.  66:85C9       |test    cx,cx<br>
+其实就是等效于 你输入的假码是否为空  及判断<br>
+If(假码 == “”)<br>
+对于实际当前代码中，没有什么用途<br>
+但是它对下面的代码有很大影响<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/11.png"><br>
+Eax和edx的改变  是的  它们之间的差值再右移一位，恰好是0xE<br>
+我一开始也是猜测这个很可能是和位数有关，发现eax的最终结果 始终等于你输入的文本的长度，我们当前是12341234，所以下面的  cmp就无法通过了<br>
+于是我尝试14位假码时，恰好 长度等于0xE（其实就是假码长度要等于十进制的14）<br>
+实际上由于jg的跳转条件的原因，只要小于14位都可通过，大于14位直接跳转<br>
+【至于为什么会这样会等于长度，我可能要用数学算一下哦】</p>
+<p>10、接下来是对flag的分析了<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/12.png"><br>
+首先它把我们的文本转化为ascii码<br>
+且注意！！！！！！！！ Flag本身只有14位  而且前面的假码要求我们就是14位，说明我们输入的假码要参与运算，只有符合条件的时候才能得出正确的数据。【推测，还未证实】<br>
+然后WideCharToMultiByte函数，将文本存入了00D69F00。此时我已经重新输入了16位假码<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/13.png"><br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/14.png"><br>
+但是我们看到是乱码<br>
+实际上是因为 将假码转化为ascii后，我们通过unicode查看就会乱码，转化为ascii就好<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/15.png"></p>
+<p>注意！！！！<br>
+00401C53  |.  B9 F8775700   mov     ecx,005777F8                          ;  UNICODE “在此输入口令：”<br>
+00401C58  |.  8BC3          mov     eax,ebx                               ;  eax = 假码<br>
+00401C5A  |.  2BCB          sub     ecx,ebx<br>
+00401C5C  |.  8D6424 00     lea     esp,dword ptr ss:[esp]<br>
+00401C60  |&gt;  8A1401        /mov     dl,byte ptr ds:[ecx+eax]             ;  将[ecx+eax]的值传入 dl<br>
+00401C63  |.  3010          |xor     byte ptr ds:[eax],dl<br>
+00401C65  |.  40            |inc     eax<br>
+00401C66  |.  4E            |dec     esi<br>
+00401C67  |.^ 75 F7         \jnz     short 00401C60                       ;  判断 假码是否等于 在此输入口令：</p>
+<p>这几条汇编我们要好好分析一下<br>
+00401C5C  |.  8D6424 00     lea     esp,dword ptr ss:[esp] 是栈处理 我们无需理会，对分析无作用<br>
+首先它将UNICODE “在此输入口令：”  的指针传到了005777F8，且此时 ebx为假码的指针，然后它将假码的指针传给了 eax，根据个人经验，他们肯定要进行转化或者比较了。<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/16.png"><br>
+然后它竟然 把 ecx 减去了ebx 即 ecx = ecx – ebx;  哇绝望啊   因为它是负数  注意mov eax,ebx  很明显 eax = ebx的<br>
+所以后面的[ecx+eax]= [005777F8 -ebx + eax] = [005777F8] 坑爹啊  根本没变<br>
+然后将 005777F8 的单个二进制数值 和 [eax] 假码 进行 xor操作<br>
+因为已经到该call结尾了，后面也有flag的字符串，所以我们很有必要怀疑 这里就是flag的隐藏点</p>
+<p>结论：简单说 就是 把  “在此输入口令：” 和 假码转化为  ascii  然后进行xor (异或操作)</p>
+<p>00401C69  |&gt; \813B 1B1C1746 cmp     dword ptr ds:[ebx],0x46171C1B<br>
+00401C6F      0F85 E7000000 jnz     00401D5C<br>
+00401C75  |.  817B 04 F4FD2&gt;cmp     dword ptr ds:[ebx+0x4],0x3020FDF4<br>
+00401C7C      0F85 DA000000 jnz     00401D5C<br>
+00401C82  |.  817B 08 B70C8&gt;cmp     dword ptr ds:[ebx+0x8],0x7E8E0CB7<br>
+00401C89      0F85 CD000000 jnz     00401D5C<br>
+00401C8F  |.  807B 0C 78    cmp     byte ptr ds:[ebx+0xC],0x78<br>
+00401C93      0F85 C3000000 jnz     00401D5C<br>
+00401C99  |.  807B 0D DE    cmp     byte ptr ds:[ebx+0xD],0xDE<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/17.png"><br>
+上一步中 ebx=eax 且 ebx是假码的指针，然后他要判断假码的 的数据是不是<br>
+1B 1C 17 46 F4 FD 20 30 B7 0C 8E 7E 78 DE</p>
+<p>对此我们可以确定 上一步中 假设我们输入正确的 假码 应该是 1B 1C 17 46 F4 FD 20 30 B7 0C 8E 7E 78 DE 的数据<br>
+所以我们可以用c++直接 进行运算，代码如下<br>
+即<br>
+28 57 64 6B 93 8F 65 51 E3 53 E4 4E 1A FF 00 00  在此输入口令：<br>
+1B 1C 17 46 F4 FD 20 30 B7 0C 8E 7E 78 DE        F酏 0?巭x?.<br>
+进行异或运算<br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/18.png"><br>
+<img src="/" alt class="lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/19.png"></p>
+<p>得出 Flag{3Ks-grEaT_j0b!}<br>
+大总结：这个程序对于汇编的前后联系有较高要求，要求对指针有较强的敏感，对函数的各个参数有仔细观察。整体来说 难度不高，只要一步一步分析正确，最终发现flag的关键汇编代码，便可得出flag</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:196011564@qq.com">咲夜南梦</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/">http://yoursite.com/2018/11/17/CTF-JarvisOJ-Re-CTF-100-0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">咲夜南梦's 博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF    </a><a class="post-meta__tags" href="/tags/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程    </a></div><div class="post_share"><div class="social-share" data-image="/img/post.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/alipay.jpg" alt="支付宝"/><div class="post-qr-code__desc">支付宝</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2018/11/17/CTF-JarvisOJ-Re-%E8%BD%AF%E4%BB%B6%E5%AF%86%E7%A0%81%E7%A0%B4%E8%A7%A3-2/"><img class="prev_cover lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-软件密码破解-2/13.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CTF-JarvisOJ-Re-软件密码破解-2</div></div></a></div><div class="next-post pull_right"><a href="/2018/11/17/CTF-JarvisOJ-Re-%E8%BD%AF%E4%BB%B6%E5%AF%86%E7%A0%81%E7%A0%B4%E8%A7%A3-1/"><img class="next_cover lazyload" data-src="/2018/11/17/CTF-JarvisOJ-Re-软件密码破解-1/4.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CTF-JarvisOJ-Re-软件密码破解-1</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2018/11/17/CTF-JarvisOJ-Re-软件密码破解-1/" title="CTF-JarvisOJ-Re-软件密码破解-1"><img class="relatedPosts_cover lazyload"data-src="/2018/11/17/CTF-JarvisOJ-Re-软件密码破解-1/4.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2018-11-17</div><div class="relatedPosts_title">CTF-JarvisOJ-Re-软件密码破解-1</div></div></a></div><div class="relatedPosts_item"><a href="/2018/11/17/CTF-JarvisOJ-Re-软件密码破解-2/" title="CTF-JarvisOJ-Re-软件密码破解-2"><img class="relatedPosts_cover lazyload"data-src="/2018/11/17/CTF-JarvisOJ-Re-软件密码破解-2/13.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2018-11-17</div><div class="relatedPosts_title">CTF-JarvisOJ-Re-软件密码破解-2</div></div></a></div><div class="relatedPosts_item"><a href="/2018/11/17/CTF-Re-Authenticator/" title="CTF-Re-Authenticator"><img class="relatedPosts_cover lazyload"data-src="/2018/11/17/CTF-Re-Authenticator/2.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2018-11-17</div><div class="relatedPosts_title">CTF-Re-Authenticator</div></div></a></div><div class="relatedPosts_item"><a href="/2018/11/09/CTF-实验吧-Re-bitwise/" title="CTF-实验吧-Re-bitwise"><img class="relatedPosts_cover lazyload"data-src="/2018/11/09/CTF-实验吧-Re-bitwise/5.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2018-11-09</div><div class="relatedPosts_title">CTF-实验吧-Re-bitwise</div></div></a></div><div class="relatedPosts_item"><a href="/2020/04/30/ARM-汇编学习/" title="ARM-常用汇编"><img class="relatedPosts_cover lazyload"data-src="/2020/04/30/ARM-常用汇编/bg.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-04-30</div><div class="relatedPosts_title">ARM-常用汇编</div></div></a></div><div class="relatedPosts_item"><a href="/2018/11/09/Blowfish加密算法简介/" title="密码学-Blowfish加密算法"><img class="relatedPosts_cover lazyload"data-src="/2018/11/09/Blowfish加密算法简介/1.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2018-11-09</div><div class="relatedPosts_title">密码学-Blowfish加密算法</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: '560d606afb5e3201949f',
+  clientSecret: 'adf278d9baa268981569ab6db3020b28d99f2aec',
+  repo: '196011564.github.io',
+  owner: '196011564',
+  admin: ['196011564'],
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN',
+  perPage: 10,
+  distractionFreeMode: false,
+  pagerDirection: 'last',
+  createIssueManually: false,
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  try {
+    document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+  } catch (e) {
+    return false
+  }
+}</script></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 咲夜南梦</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><script src="/js/search/local-search.js"></script></body></html>
